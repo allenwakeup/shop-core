@@ -19,5 +19,23 @@
         "psr-4": {
             "Goodcatch\\Modules\\Core\\": ""
         }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repos.goodcatch.cn/repository/goodcatch-composer-group/"
+        },
+        {
+            "packagist.org": false
+        }
+    ],
+    "require-dev": {
+        "illuminate/support": "^6.0",
+        "laravel/framework": "^6.0",
+        "elendev/nexus-composer-push": "^0.2.2",
+        "laravel/helpers": "^1.1",
+        "laravel/laravel": "^6.0",
+        "mcamara/laravel-localization": "^1.5",
+        "goodcatch/laravel-modules": "dev-master"
     }
 }
