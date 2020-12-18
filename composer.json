@@ -1,0 +1,23 @@
+{
+    "name": "goodcatch/core",
+    "description": "goodcatch laravel module - core, the most practically and basic module for modules",
+    "authors": [
+        {
+            "name": "Allen Li",
+            "email": "ali@goodcatch.cn"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Goodcatch\\Modules\\Core\\": ""
+        }
+    }
+}
