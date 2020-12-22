@@ -1,5 +1,5 @@
 {
-    "name": "goodcatch/core",
+    "name": "goodcatch/laravel-module-core",
     "description": "goodcatch laravel module - core, the most practically and basic module for modules",
     "authors": [
         {
@@ -9,7 +9,9 @@
     ],
     "extra": {
         "laravel": {
-            "providers": [],
+            "providers": [
+                "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"
+            ],
             "aliases": {
 
             }
