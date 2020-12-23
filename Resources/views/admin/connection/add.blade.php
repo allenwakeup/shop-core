@@ -167,7 +167,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">分类</label>
                     <div class="layui-input-block">
-                        @include('admin.select', ['select_data' => \collect (Goodcatch\Modules\Core\Model\Admin\Connection::TYPE)->map(function ($key, $value) {return ['id' => $value, 'name' => $key];}), 'select_name' => 'type', 'please_select' => '分类', 'select_required' => true, 'model' => ['type' => $model->type ?? '']])
+                        @include('core::admin.select', ['select_data' => \collect (Goodcatch\Modules\Core\Model\Admin\Connection::TYPE)->map(function ($key, $value) {return ['id' => $value, 'name' => $key];}), 'select_name' => 'type', 'please_select' => '分类', 'select_required' => true, 'model' => ['type' => $model->type ?? '']])
                     </div>
                 </div>
                 <div class="layui-form-item">

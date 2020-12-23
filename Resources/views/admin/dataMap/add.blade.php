@@ -55,7 +55,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">关联关系</label>
                     <div class="layui-input-block" style="margin-left: 96px;">
-                        @include('admin.select', ['select_data' => light_dictionary('CORE_DICT_MODEL_RELATIONS'), 'select_name' => 'relationship', 'please_select' => '关联关系', 'select_required' => true, 'disabled' => true, 'model' => ['relationship' => $model->relationship ?? '']])
+                        @include('core::admin.select', ['select_data' => light_dictionary('CORE_DICT_MODEL_RELATIONS'), 'select_name' => 'relationship', 'please_select' => '关联关系', 'select_required' => true, 'disabled' => true, 'model' => ['relationship' => $model->relationship ?? '']])
                     </div>
                 </div>
                 <div class="layui-form-item">

@@ -10,7 +10,7 @@ use Goodcatch\Modules\Core\Model\Admin\Eloquent;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
-class DataRouteRepository
+class DataRouteRepository extends BaseRepository
 {
 
     public static function list ($perPage, $condition = [], $keyword = null)

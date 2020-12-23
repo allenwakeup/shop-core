@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use ReflectionClass;
 
-class DataMapRepository
+class DataMapRepository extends BaseRepository
 {
 
     public static $REFLECT;

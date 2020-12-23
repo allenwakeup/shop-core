@@ -5,7 +5,7 @@
 
 namespace Goodcatch\Modules\Core\Repositories\Admin;
 
-use App\Model\Admin\AdminUser;
+use Goodcatch\Modules\Lightcms\Model\Admin\AdminUser;
 
 
 class ModelMappingRepository extends BaseRepository

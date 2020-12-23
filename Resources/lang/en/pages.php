@@ -22,6 +22,19 @@ return [
                 ]
             ]
         ]
+    ],
+
+    'app' => [
+        'menu' => [
+            'admin' => [
+                'm' => [
+                    'core' => [
+                        'index' => 'Module Core'
+                    ]
+                ]
+            ]
+
+        ]
     ]
 
 ];

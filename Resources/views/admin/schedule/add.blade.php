@@ -52,7 +52,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">任务类别</label>
                     <div class="layui-input-block">
-                        @include('admin.select', ['select_data' => \collect (Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE)->map(function ($key, $value) {return ['id' => $value, 'name' => $key];}), 'select_name' => 'schedule_type', 'please_select' => '分类', 'model' => ['schedule_type' => $model->schedule_type ?? '']])
+                        @include('core::admin.select', ['select_data' => \collect (Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE)->map(function ($key, $value) {return ['id' => $value, 'name' => $key];}), 'select_name' => 'schedule_type', 'please_select' => '分类', 'model' => ['schedule_type' => $model->schedule_type ?? '']])
                     </div>
                 </div>
                 <div class="layui-form-item input input{{\Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_COMMAND}}" @if (! isset ($model) || \Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_COMMAND !== $model->schedule_type) style="display: none;" @endif>
@@ -70,7 +70,7 @@
                 <div class="layui-form-item input input{{\Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB}}" @if (! isset ($model) || \Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB !== $model->schedule_type) style="display: none;" @endif>
                     <label class="layui-form-label">任务模板</label>
                     <div class="layui-input-block">
-                        @include('admin.select', ['select_data' => light_dictionary('CORE_DICT_SCHEDULE_JOBS'), 'select_name' => 'input' . Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB, 'please_select' => '任务模板', 'select_required' => true, 'model' => ['input' . Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB => $model->input ?? '']])
+                        @include('core::admin.select', ['select_data' => light_dictionary('CORE_DICT_SCHEDULE_JOBS'), 'select_name' => 'input' . Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB, 'please_select' => '任务模板', 'select_required' => true, 'model' => ['input' . Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB => $model->input ?? '']])
                     </div>
                 </div>
                 <div class="layui-form-item input input{{\Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB}}" @if (! isset ($model) || \Goodcatch\Modules\Core\Model\Admin\Schedule::TYPE_JOB !== $model->schedule_type) style="display: none;" @endif>
