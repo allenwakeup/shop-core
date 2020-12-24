@@ -74,8 +74,4 @@ class Area extends Model
         return $this->hasOne ('Goodcatch\Modules\Core\Model\Admin\County', 'county_id', 'code');
     }
 
-    public function factories ()
-    {
-        return $this->hasMany ('Goodcatch\Modules\Core\Model\Admin\Factory');
-    }
 }

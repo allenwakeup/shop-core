@@ -47,7 +47,11 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+
+        $this->registerMailViews();
+
     }
+
 
     /**
      * Register config.
@@ -80,6 +84,15 @@ class CoreServiceProvider extends ServiceProvider
         ], ['views', $this->moduleNameLower . '-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
+    }
+
+    public function registerMailViews()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->publishes([
+                dirname(__DIR__).'/Resources/views/emails' => $this->app->resourcePath('views/emails'),
+            ], 'goodcatch-modules-email');
+        }
     }
 
     /**

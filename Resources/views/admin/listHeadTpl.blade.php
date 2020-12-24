@@ -75,3 +75,17 @@
         <%# } %>
     </script>
 @endif
+@if (array_get ($data, 'region.templet') === '#regionText')
+    <script type="text/html" id="regionText">
+        <%# if(d.region) { %>
+        <%# if(d.region.city) { %>
+        <%# if(d.region.city.province) { %>
+        <% d.region.city.province.name %>
+        <%# } %>
+        <% d.region.city.name %>
+        <%# } %>
+        <% d.region.name %>
+        <%# } %>
+
+    </script>
+@endif
