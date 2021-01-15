@@ -15,6 +15,20 @@
             "aliases": {
 
             }
+        },
+        "nexus-push": {
+            "url": "https://repos.goodcatch.cn/repository/composer",
+            "ignore-by-git-attributes": true,
+            "ignore": [
+                "test.php",
+                "auth.json",
+                "composer.lock",
+                ".gitignore",
+                ".git",
+                ".DS_Store",
+                ".idea/",
+                "vendor/"
+            ]
         }
     },
     "autoload": {
