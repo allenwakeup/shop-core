@@ -13,6 +13,8 @@ abstract class Model extends BaseModel
     /**
      * @var string module table with prefix
      */
-    protected $module_table_prefix = 'core_';
+    protected function getModuleTablePrefix () {
+        return 'core_';
+    }
 
 }

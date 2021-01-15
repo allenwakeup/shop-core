@@ -1,14 +1,27 @@
 # Core —— Goodcatch Laravel Modules extension
 
-required basic module for goodcatch/laravel-modules
+required basic module goodcatch/laravel-modules
 
 ## Introduction
 
+Core module include many functions that helps development more effective.
 
 ## Installation
 
+Just copy the entire project to path **app/Modules** or pre-configured path that defined value of '**MODULE_INSTALL_PATH**' in environment file;
 
-### install module
+Make sure folder name is exactly 'Core'.
+
+### config module core
+
+#### db migration
+
+```shell script
+
+php artisan module:migrate core
+
+
+```
 
 #### seed
 
