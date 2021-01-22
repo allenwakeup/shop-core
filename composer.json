@@ -8,14 +8,6 @@
         }
     ],
     "extra": {
-        "laravel": {
-            "providers": [
-                "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"
-            ],
-            "aliases": {
-
-            }
-        },
         "nexus-push": {
             "url": "https://repos.goodcatch.cn/repository/composer",
             "ignore-by-git-attributes": true,
