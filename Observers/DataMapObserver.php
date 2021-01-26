@@ -16,16 +16,18 @@ use Illuminate\Support\Arr;
 class DataMapObserver
 {
 
+    const SERVICE_ALIAS = 'service.permission';
+
+
     // creating, created, updating, updated, saving
     // saved, deleting, deleted, restoring, restored
     public function created (DataMap $item)
     {
         // load menu from other module, e.g Lightcms
-        module_tap ('LightcmsMenuQuery', function ($query) use ($item) {
+        module_tap (self::SERVICE_ALIAS, function ($service) use ($item) {
 
             // get menu query builder from application abstract
-
-            $menu = $query
+            $menu = $service->query ()
                 ->where ('route', 'admin::' . module_route_prefix ('.') . '.core.dataMap.assignment')
                 ->where ('route_params', '')
                 ->first ()
@@ -33,9 +35,9 @@ class DataMapObserver
 
             if (isset ($menu))
             {
-
                 // load root menu from other module
-                module_tap ('LightcmsRootMenu', function ($root_menu) use ($item, $menu) {
+                module_tap (self::SERVICE_ALIAS, function ($service) use ($item, $menu) {
+                    $root_menu = $service->retrieve (['route' => $menu->route]);
 
                     $menu_route = $menu->route . '.' . ($item->left_table . '_' . $item->right_table);
 
@@ -51,17 +53,15 @@ class DataMapObserver
                         'is_lock_name' => 0
                     ];
 
-                    module_tap ('LightcmsMenuUpdateOrCreate', function ($new_menu) use ($data) {
+                    module_tap (self::SERVICE_ALIAS, function ($service) use ($data, $menu_route) {
+                        $new_menu = $service->save ($data, ['route' => $menu_route]);
                         if (isset ($new_menu))
                         {
                             $this->dispatchChanges ();
                         }
-                    }, [
-                        'attributes'    => ['route' => $menu_route],
-                        'values'        => $data
-                    ]);
+                    });
 
-                }, ['route' => $menu->route]);
+                });
 
             }
         });
