@@ -16,7 +16,7 @@ use Illuminate\Support\Arr;
 class DataMapObserver
 {
 
-    const SERVICE_ALIAS = 'service.permission';
+    const PERMISSION_SERVICE_ALIAS = 'modules.service.permission';
 
 
     // creating, created, updating, updated, saving
@@ -24,7 +24,7 @@ class DataMapObserver
     public function created (DataMap $item)
     {
         // load menu from other module, e.g Lightcms
-        module_tap (self::SERVICE_ALIAS, function ($service) use ($item) {
+        module_tap (self::PERMISSION_SERVICE_ALIAS, function ($service) use ($item) {
 
             // get menu query builder from application abstract
             $menu = $service->query ()
@@ -36,7 +36,7 @@ class DataMapObserver
             if (isset ($menu))
             {
                 // load root menu from other module
-                module_tap (self::SERVICE_ALIAS, function ($service) use ($item, $menu) {
+                module_tap (self::PERMISSION_SERVICE_ALIAS, function ($service) use ($item, $menu) {
                     $root_menu = $service->retrieve (['route' => $menu->route]);
 
                     $menu_route = $menu->route . '.' . ($item->left_table . '_' . $item->right_table);
@@ -53,7 +53,7 @@ class DataMapObserver
                         'is_lock_name' => 0
                     ];
 
-                    module_tap (self::SERVICE_ALIAS, function ($service) use ($data, $menu_route) {
+                    module_tap (self::PERMISSION_SERVICE_ALIAS, function ($service) use ($data, $menu_route) {
                         $new_menu = $service->save ($data, ['route' => $menu_route]);
                         if (isset ($new_menu))
                         {

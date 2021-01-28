@@ -762,7 +762,7 @@ class ExchangeData extends ConfigurableJob
      */
     protected function makeQueryModel ($inputOrOutput, $directory = Connection::TYPE_SRC, $model = null)
     {
-        $type = 'App\\Modules\\Core\\Model\\Admin\\' . Arr::get ($inputOrOutput, self::TYPE, 'Eloquent');
+        $type = 'Goodcatch\\Modules\\Core\\Model\\Admin\\' . Arr::get ($inputOrOutput, self::TYPE, 'Eloquent');
 
         $model = isset ($model) ? $model : new $type;
 

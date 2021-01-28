@@ -47,6 +47,8 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(DatabaseServiceProvider::class);
+        $this->app->register(DataMapServiceProvider::class);
 
         $this->registerMailViews();
 
