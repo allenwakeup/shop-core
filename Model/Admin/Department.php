@@ -13,10 +13,11 @@ class Department extends Model
     ];
 
     public static $listField = [
-        'parentName' => [
+        'pid' => [
             'title' => '上级部门',
             'width' => 120,
-            'sort' => true
+            'sort' => true,
+            'templet' => '#pidText'
         ],
         'name' => [
             'title' => '名称',
@@ -31,12 +32,12 @@ class Department extends Model
 
     public function parent()
     {
-        return $this->belongsTo('Goodcatch\Modules\Core\Model\Admin', 'pid');
+        return $this->belongsTo('Goodcatch\Modules\Core\Model\Admin\Department', 'pid');
     }
 
     public function children()
     {
-        return $this->hasMany('Goodcatch\Modules\Core\Model\Admin', 'pid');
+        return $this->hasMany('Goodcatch\Modules\Core\Model\Admin\Department', 'pid');
     }
 
 }

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Goodcatch\Modules\Core\Repositories\Admin;
-
 
 use Goodcatch\Modules\Core\Model\Admin\Department;
 
@@ -11,6 +9,7 @@ class DepartmentRepository extends BaseRepository
     public static function list ($perPage, $condition = [], $keyword = null)
     {
         $data = Department::query ()
+            ->with ('parent')
             ->where (function ($query) use ($condition, $keyword) {
                 self::buildQuery ($query, $condition);
                 if (! empty ($keyword))

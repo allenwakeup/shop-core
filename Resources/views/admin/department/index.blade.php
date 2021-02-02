@@ -4,25 +4,25 @@
     @include('admin.breadcrumb')
 
     <div class="layui-card">
-        <div class="layui-form layui-card-header light-search">
+        <div class="layui-form layui-card-header light-search" style="height: auto">
             <form>
                 <input type="hidden" name="action" value="search">
-            @include('admin.searchField', ['data' => Goodcatch\Modules\Core\Model\Admin\Department::$searchField])
-            <div class="layui-inline">
-                <label class="layui-form-label">创建日期</label>
-                <div class="layui-input-inline">
-                    <input type="text" name="created_at" class="layui-input" id="created_at" value="{{ request()->get('created_at') }}">
+                @include('admin.searchField', ['data' => Goodcatch\Modules\Core\Model\Admin\Department::$searchField])
+                <div class="layui-inline">
+                    <label class="layui-form-label">创建日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="created_at" class="layui-input" id="created_at" value="{{ request()->get('created_at') }}">
+                    </div>
                 </div>
-            </div>
-            <div class="layui-inline">
-                <button class="layui-btn layuiadmin-btn-list" lay-filter="form-search" id="submitBtn">
-                    <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
-                </button>
-            </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-list" lay-filter="form-search" id="submitBtn">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
             </form>
         </div>
         <div class="layui-card-body">
-            <table class="layui-table" lay-data="{url:'{{ route('admin::' . module_route_prefix ('.') . 'core.department.list') }}?{{ request()->getQueryString() }}', page:true, limit:50, id:'test', toolbar:'<div><a href=\'{{ route('admin::' . module_route_prefix ('.') . 'core.department.create') }}\'><i class=\'layui-icon layui-icon-add-1\'></i>新增部门</a></div>'}" lay-filter="test">
+            <table class="layui-table" lay-filter="table" lay-data="{url:'{{ route('admin::' . module_route_prefix ('.') . 'core.department.list') }}?{{ request()->getQueryString() }}', page:true, limit:50, id:'test', toolbar:'<div><a href=\'{{ route('admin::' . module_route_prefix ('.') . 'core.department.create') }}\'><i class=\'layui-icon layui-icon-add-1\'></i>新增部门</a></div>'}" lay-filter="test">
                 <thead>
                 <tr>
                     <th lay-data="{field:'id', width:80, sort: true}">ID</th>
@@ -83,5 +83,15 @@
                 layer.close (index);
             });
         }
+
+        layui.use('table', function() {
+            var table = layui.table;
+            table.on('rowDouble(table)', function (obj) {
+                var data = obj.data;
+
+                window.location.href = data.editUrl;
+
+            });
+        });
     </script>
 @endsection

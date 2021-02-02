@@ -7,3 +7,4 @@ Route::get('/departments/create', 'DepartmentController@create')->name('departme
 Route::post('/departments', 'DepartmentController@save')->name('department.save');
 Route::get('/departments/{id}/edit', 'DepartmentController@edit')->name('department.edit');
 Route::put('/departments/{id}', 'DepartmentController@update')->name('department.update');
+Route::delete ('/departments/{id}', 'DepartmentController@delete')->name ('department.delete');
