@@ -3,7 +3,7 @@
 namespace Goodcatch\Modules\Core\Providers;
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Goodcatch\Modules\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -12,30 +12,54 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $moduleNamespace = 'Goodcatch\Modules\Core\Http\Controllers';
-
-    /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        parent::boot();
-    }
+    protected $moduleNamespace = 'Goodcatch\Modules\Core';
 
     /**
      * Define the routes for the application.
      *
      * @return void
      */
-    public function map()
+    public function map ()
     {
-        $this->mapApiRoutes();
+        $this->mapApiRoutes ();
 
-        $this->mapWebRoutes();
+        $this->mapWebRoutes ();
+
+        $this->mapAdminRoutes ();
+    }
+
+    /**
+     * Define the "admin" routes for the application.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapAdminRoutes ()
+    {
+        if (app ()->has ('laravellocalization')) {
+            $route = Route::middleware ('localeSessionRedirect', 'localizationRedirect', 'localeViewPath');
+            $laravel_localization = app ('laravellocalization')->setLocale ();
+            $route_file = module_path ('Core', 'Routes/admin.php');
+            if (! empty ($laravel_localization)) {
+                $route->prefix ($laravel_localization);
+                $route->group (function () use ($route_file)
+                {
+                    Route::prefix ('admin')
+                        ->middleware ('web')
+                        ->namespace ($this->moduleNamespace . '\\' . $this->backendNamespace)
+                        ->group ($route_file);
+                });
+            }
+            else {
+                Route::prefix ('admin')
+                    ->middleware ('web')
+                    ->namespace ($this->moduleNamespace . '\\' . $this->backendNamespace)
+                    ->group ($route_file);
+            }
+
+        }
+
     }
 
     /**
@@ -48,8 +72,8 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes()
     {
         Route::middleware('web')
-            ->namespace($this->moduleNamespace)
-            ->group(module_path('Core', '/Routes/web.php'));
+            ->namespace($this->moduleNamespace . '\\' . $this->frontendNamespace)
+            ->group(module_path('Core', 'Routes/web.php'));
     }
 
     /**
@@ -63,7 +87,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix('api')
             ->middleware('api')
-            ->namespace($this->moduleNamespace)
-            ->group(module_path('Core', '/Routes/api.php'));
+            ->namespace($this->moduleNamespace . '\\' . $this->apiNamespace)
+            ->group(module_path('Core', 'Routes/api.php'));
     }
 }
