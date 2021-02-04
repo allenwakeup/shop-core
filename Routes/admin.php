@@ -11,11 +11,12 @@
 
 use Illuminate\Support\Str;
 
-Route::group(
+Route::group (
     [
         'as' => 'admin::',
     ],
-    function () {
+    function ()
+    {
 
         Route::middleware ('log:admin', 'auth:admin', 'authorization:admin')
             ->prefix (module_route_prefix ('/core'))
@@ -23,20 +24,25 @@ Route::group(
             ->group (function ()
             {
                 Route::get ('/', 'CoreController@index')->name ('index');
-                $routes_path = module_path ('Core', 'Routes') . '/auto';
-                if (is_dir ($routes_path)) {
-                    foreach (new DirectoryIterator ($routes_path) as $f) {
-                        if ($f->isDot ()) {
-                            continue;
+                Route::namespace ('Admin')
+                    ->group (function ()
+                    {
+                        $routes_path = module_path ('Core', 'Routes') . '/auto';
+                        if (is_dir ($routes_path)) {
+                            foreach (new DirectoryIterator ($routes_path) as $f) {
+                                if ($f->isDot ()) {
+                                    continue;
+                                }
+                                $name = $f->getPathname ();
+                                if ($f->isFile () && Str::endsWith ($name, '.php')) {
+                                    require $name;
+                                }
+                            }
                         }
-                        $name = $f->getPathname ();
-                        if ($f->isFile () && Str::endsWith ($name, '.php')) {
-                            require $name;
-                        }
-                    }
-                }
+                    });
 
-        });
+
+            });
 
     }
 );

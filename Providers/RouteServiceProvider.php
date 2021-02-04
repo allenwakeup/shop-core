@@ -47,14 +47,14 @@ class RouteServiceProvider extends ServiceProvider
                 {
                     Route::prefix ('admin')
                         ->middleware ('web')
-                        ->namespace ($this->moduleNamespace . '\\' . $this->backendNamespace)
+                        ->namespace ($this->moduleNamespace . '\\Http\\Controllers')
                         ->group ($route_file);
                 });
             }
             else {
                 Route::prefix ('admin')
                     ->middleware ('web')
-                    ->namespace ($this->moduleNamespace . '\\' . $this->backendNamespace)
+                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers')
                     ->group ($route_file);
             }
 
@@ -69,11 +69,11 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapWebRoutes()
+    protected function mapWebRoutes ()
     {
-        Route::middleware('web')
-            ->namespace($this->moduleNamespace . '\\' . $this->frontendNamespace)
-            ->group(module_path('Core', 'Routes/web.php'));
+        Route::middleware ('web')
+            ->namespace ($this->moduleNamespace . '\\' . $this->frontendNamespace)
+            ->group (module_path ('Core', 'Routes/web.php'));
     }
 
     /**
@@ -83,11 +83,11 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapApiRoutes()
+    protected function mapApiRoutes ()
     {
-        Route::prefix('api')
-            ->middleware('api')
-            ->namespace($this->moduleNamespace . '\\' . $this->apiNamespace)
-            ->group(module_path('Core', 'Routes/api.php'));
+        Route::prefix ('api')
+            ->middleware ('api')
+            ->namespace ($this->moduleNamespace . '\\' . $this->apiNamespace)
+            ->group (module_path ('Core', 'Routes/api.php'));
     }
 }
