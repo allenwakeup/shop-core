@@ -21,28 +21,22 @@ Route::group (
         Route::middleware ('log:admin', 'auth:admin', 'authorization:admin')
             ->prefix (module_route_prefix ('/core'))
             ->name (module_route_prefix ('.core.'))
+            ->namespace ('Admin')
             ->group (function ()
             {
                 Route::get ('/', 'CoreController@index')->name ('index');
-                Route::namespace ('Admin')
-                    ->group (function ()
-                    {
-                        $routes_path = module_path ('Core', 'Routes') . '/auto';
-                        if (is_dir ($routes_path)) {
-                            foreach (new DirectoryIterator ($routes_path) as $f) {
-                                if ($f->isDot ()) {
-                                    continue;
-                                }
-                                $name = $f->getPathname ();
-                                if ($f->isFile () && Str::endsWith ($name, '.php')) {
-                                    require $name;
-                                }
-                            }
+                $routes_path = module_path ('Core', 'Routes') . '/auto';
+                if (is_dir ($routes_path)) {
+                    foreach (new DirectoryIterator ($routes_path) as $f) {
+                        if ($f->isDot ()) {
+                            continue;
                         }
-                    });
-
-
+                        $name = $f->getPathname ();
+                        if ($f->isFile () && Str::endsWith ($name, '.php')) {
+                            require $name;
+                        }
+                    }
+                }
             });
-
     }
 );

@@ -7,7 +7,9 @@
     "providers": [
         "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"
     ],
-    "aliases": {},
+    "aliases": {
+        "Goodcatch\\Modules\\Laravel\\Contracts\\Database\\ModuleDBConnectionService": "modules.service.connection"
+    },
     "files": [],
     "requires": []
 }

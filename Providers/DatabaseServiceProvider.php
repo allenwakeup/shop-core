@@ -39,7 +39,7 @@ class DatabaseServiceProvider extends ServiceProvider
             return $manager;
         });
 
-        $this->app->alias(ModuleDBConnectionService::class, 'modules.service.connection');
+        // $this->app->alias(ModuleDBConnectionService::class, 'modules.service.connection');
     }
 
     protected function loadConnections ()
