@@ -59,7 +59,6 @@ class DepartmentController extends Controller
         $action = $request->get ('action');
         $condition = $request->only ($this->formNames);
 
-
         if (isset ($condition ['pid'])) {
             $condition ['pid'] = ['=', $condition ['pid']];
         } else {
@@ -68,7 +67,7 @@ class DepartmentController extends Controller
             }
         }
 
-        if ($request->type && $request->type === 'tree')
+        if ($request->type === 'tree')
         {
             if (!empty ($request->keyword) && is_numeric ($request->keyword))
             {
@@ -81,7 +80,10 @@ class DepartmentController extends Controller
                 'data' => $data->values ()->all (),
                 'msg' => '请求成功'
             ];
-        } else {
+        } else if ($request->type === 'select') {
+            $data = DepartmentRepository::selectTree ($request->pid ?? 0);
+        }
+        else {
             $data = DepartmentRepository::list ($perPage, $condition);
         }
 
