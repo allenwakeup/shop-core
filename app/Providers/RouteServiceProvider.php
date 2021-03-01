@@ -40,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
         if (app ()->has ('laravellocalization')) {
             $route = Route::middleware ('localeSessionRedirect', 'localizationRedirect', 'localeViewPath');
             $laravel_localization = app ('laravellocalization')->setLocale ();
-            $route_file = module_path ('Core', 'Routes/admin.php');
+            $route_file = module_path ('Core', 'routes/admin.php');
             if (! empty ($laravel_localization)) {
                 $route->prefix ($laravel_localization);
                 $route->group (function () use ($route_file)
@@ -73,7 +73,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::middleware ('web')
             ->namespace ($this->moduleNamespace . '\\' . $this->frontendNamespace)
-            ->group (module_path ('Core', 'Routes/web.php'));
+            ->group (module_path ('Core', 'routes/web.php'));
     }
 
     /**
@@ -88,6 +88,6 @@ class RouteServiceProvider extends ServiceProvider
         Route::prefix ('api')
             ->middleware ('api')
             ->namespace ($this->moduleNamespace . '\\' . $this->apiNamespace)
-            ->group (module_path ('Core', 'Routes/api.php'));
+            ->group (module_path ('Core', 'routes/api.php'));
     }
 }
