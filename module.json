@@ -10,6 +10,8 @@
     "aliases": {
         "Goodcatch\\Modules\\Laravel\\Contracts\\Database\\ModuleDBConnectionService": "modules.service.connection"
     },
-    "files": [],
+    "files": [
+        "src/helpers.php"
+    ],
     "requires": []
 }
