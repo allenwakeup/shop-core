@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\App;
 class DatabaseServiceProvider extends ServiceProvider
 {
 
+    /**
+     * @var string $moduleName
+     */
+    protected $moduleName = 'Core';
+
+    /**
+     * @var string $moduleNameLower
+     */
+    protected $moduleNameLower = 'core';
 
     /**
      * Boot the application events.
@@ -34,12 +43,10 @@ class DatabaseServiceProvider extends ServiceProvider
     {
         $this->app->singleton (ModuleDBConnectionService::class, function ($app) {
 
-            $manager = new DBConnectionManager ($app, $app ['config']->get('core', []));
+            $manager = new DBConnectionManager ($app, $app ['config']->get($this->moduleNameLower, []));
 
             return $manager;
         });
-
-        // $this->app->alias(ModuleDBConnectionService::class, 'modules.service.connection');
     }
 
     protected function loadConnections ()

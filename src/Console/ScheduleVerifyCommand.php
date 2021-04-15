@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Mail;
+use \Exception;
 
 class ScheduleVerifyCommand extends Command
 {
@@ -29,8 +30,7 @@ class ScheduleVerifyCommand extends Command
      * Execute the console command.
      *
      * @return mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Exception
+     * @throws Exception
      */
     public function handle ()
     {

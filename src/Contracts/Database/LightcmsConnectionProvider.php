@@ -1,17 +1,18 @@
 <?php
 
-namespace Goodcatch\Modules\Core\Lightcms\Contracts\Database;
+namespace Goodcatch\Modules\Core\Contracts\Database;
 
 use Goodcatch\Modules\Core\Model\Admin\Connection;
 use Goodcatch\Modules\Laravel\Contracts\Database\DBConnectionProvider;
+use Illuminate\Contracts\Foundation\Application;
 
-class ConnectionProvider implements DBConnectionProvider
+class LightcmsConnectionProvider implements DBConnectionProvider
 {
 
     /**
      * The application instance.
      *
-     * @var \Illuminate\Contracts\Foundation\Application
+     * @var Application
      */
     protected $app;
 
@@ -25,7 +26,7 @@ class ConnectionProvider implements DBConnectionProvider
     /**
      * Create a new Auth manager instance.
      *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @param  Application  $app
      * @param  string $driver
      * @return void
      */

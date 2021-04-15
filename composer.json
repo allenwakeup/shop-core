@@ -14,8 +14,6 @@
             "ignore": [
                 "test.php",
                 "auth.json",
-                "composer.lock",
-                ".gitignore",
                 ".git",
                 ".DS_Store",
                 ".idea/",
@@ -31,15 +29,11 @@
             "database/seeds"
         ]
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repos.goodcatch.cn/repository/goodcatch-composer-group/"
-        },
-        {
-            "packagist.org": false
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
         }
-    ],
+    },
     "require-dev": {
         "illuminate/support": "^6.0",
         "laravel/framework": "^6.0",

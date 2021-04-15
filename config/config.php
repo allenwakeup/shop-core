@@ -1,12 +1,14 @@
 <?php
 
 return [
+
     'name' => 'Core',
 
     /*
     |--------------------------------------------------------------------------
     | 数据映射
     |--------------------------------------------------------------------------
+    |
     |
     |
     */
@@ -46,12 +48,11 @@ return [
     'modules' => [
         'service' => [
             'connection' => [
-                'driver' => 'default',
+                'driver' => env ('MODULE_INTEGRATE', 'lightcms'),
                 'providers' => [
-                    'default' => 'lightcms'
-                ],
-                // override default
-                'class' => 'Goodcatch\\Modules\\Core\\Lightcms\\Contracts\\Database\\ConnectionProvider'
+                    'lightcms'  => 'Goodcatch\\Modules\\Core\\Contracts\\Database\\LightcmsConnectionProvider',
+                    'dcat'      => 'Goodcatch\\Modules\\Core\\Contracts\\Database\\DcatConnectionProvider',
+                ]
             ],
         ],
     ]

@@ -6,6 +6,8 @@
 namespace Goodcatch\Modules\Core\Console;
 
 use Goodcatch\Modules\Core\Model\Admin\Schedule as MySchedule;
+use Illuminate\Console\Scheduling\CallbackEvent;
+use Illuminate\Console\Scheduling;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Log;
@@ -107,7 +109,7 @@ class Kernel
      * initiate schedule in different ways
      *
      * @param $schedule
-     * @return \Illuminate\Console\Scheduling\CallbackEvent|\Illuminate\Console\Scheduling\Event|null
+     * @return CallbackEvent|Scheduling\Event|null
      */
     private function initSchedule (MySchedule $schedule)
     {
