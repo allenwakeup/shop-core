@@ -41,6 +41,7 @@
         "laravel/helpers": "^1.1",
         "laravel/laravel": "^6.0",
         "mcamara/laravel-localization": "^1.5",
-        "goodcatch/laravel-modules": "dev-master"
+        "goodcatch/laravel-modules": "dev-master",
+        "dcat/laravel-admin": "2.*"
     }
 }

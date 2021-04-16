@@ -12,6 +12,12 @@ use Illuminate\Database\Eloquent\Factory;
 class CoreServiceProvider extends ServiceProvider
 {
     /**
+     * internal module
+     * @var mixed
+     */
+    protected $modulesInternal;
+
+    /**
      * @var string $moduleName
      */
     protected $moduleName = 'Core';
@@ -43,15 +49,33 @@ class CoreServiceProvider extends ServiceProvider
      * Register the service provider.
      *
      * @return void
+     * @throws \Exception
      */
     public function register()
     {
+
+        $this->validateInternalModule();
+
         $this->app->register(RouteServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(DataMapServiceProvider::class);
 
         $this->registerMailViews();
 
+    }
+
+
+    /**
+     * make sure the internal module present
+     *
+     * @throws \Exception
+     */
+    protected function validateInternalModule () {
+        $this->modulesInternal = $this->app->make ('modules.internal');
+
+        if(!isset ($modules_internal)){
+            throw new \Exception('Internal module ' . module_integration() . ' not found', "modules.internal");
+        }
     }
 
 
@@ -109,7 +133,7 @@ class CoreServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
         } else {
-            $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang'), $this->moduleNameLower);
+            $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang/' . $this->modulesInternal->getLowerName()), $this->moduleNameLower);
         }
     }
 

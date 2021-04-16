@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 
 Route::group (
     [
+        'middleware' => 'web',
+        'prefix' => 'admin',
         'as' => 'admin::',
     ],
     function ()
@@ -24,8 +26,9 @@ Route::group (
             ->namespace ('Admin')
             ->group (function ()
             {
+
                 Route::get ('/', 'CoreController@index')->name ('index');
-                $routes_path = module_path ('Core', 'Routes') . '/auto';
+                $routes_path = __DIR__ . '/auto';
                 if (is_dir ($routes_path)) {
                     foreach (new DirectoryIterator ($routes_path) as $f) {
                         if ($f->isDot ()) {
@@ -37,6 +40,7 @@ Route::group (
                         }
                     }
                 }
+
             });
     }
 );

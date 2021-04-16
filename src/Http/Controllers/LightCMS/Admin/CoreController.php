@@ -1,6 +1,6 @@
 <?php
 
-namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
+namespace Goodcatch\Modules\Core\Http\Controllers\LightCMS\Admin;
 
 
 use Goodcatch\Modules\Core\Model\Admin\DataRoute;

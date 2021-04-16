@@ -3,7 +3,7 @@
  * @author  Allen <ali@goodcatch.cn>
  */
 
-namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
+namespace Goodcatch\Modules\Core\Http\Controllers\LightCMS\Admin;
 
 use Goodcatch\Modules\Lightcms\Http\Controllers\Controller;
 use Goodcatch\Modules\Core\Http\Requests\Admin\DataRouteRequest;

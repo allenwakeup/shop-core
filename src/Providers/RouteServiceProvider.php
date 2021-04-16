@@ -4,15 +4,46 @@ namespace Goodcatch\Modules\Core\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Goodcatch\Modules\Providers\RouteServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class RouteServiceProvider extends ServiceProvider
 {
+
+    /**
+     * @var string $moduleName
+     */
+    protected $moduleName = 'Core';
+
+    /**
+     * @var string $moduleNameLower
+     */
+    protected $moduleNameLower = 'core';
+
+    /**
+     * internal module
+     * @var mixed
+     */
+    protected $modulesInternal;
+
     /**
      * The module namespace to assume when generating URLs to actions.
      *
      * @var string
      */
     protected $moduleNamespace = 'Goodcatch\Modules\Core';
+
+    /**
+     * RouteServiceProvider constructor.
+     * @param $app
+     * @throws BindingResolutionException
+     */
+    public function __construct($app)
+    {
+        parent::__construct($app);
+
+        $this->modulesInternal = $this->app->make('modules.internal');
+
+    }
 
     /**
      * Define the routes for the application.
@@ -40,21 +71,17 @@ class RouteServiceProvider extends ServiceProvider
         if (app ()->has ('laravellocalization')) {
             $route = Route::middleware ('localeSessionRedirect', 'localizationRedirect', 'localeViewPath');
             $laravel_localization = app ('laravellocalization')->setLocale ();
-            $route_file = module_path ('Core', 'routes/admin.php');
+            $route_file = module_path($this->moduleName, 'routes/') . $this->modulesInternal->getLowerName() . '/admin.php';
+            $namespace = $this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace();
             if (! empty ($laravel_localization)) {
                 $route->prefix ($laravel_localization);
-                $route->group (function () use ($route_file)
+                $route->group (function () use ($route_file, $namespace)
                 {
-                    Route::prefix ('admin')
-                        ->middleware ('web')
-                        ->namespace ($this->moduleNamespace . '\\Http\\Controllers')
+                    Route::namespace ($namespace)
                         ->group ($route_file);
                 });
-            }
-            else {
-                Route::prefix ('admin')
-                    ->middleware ('web')
-                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers')
+            } else {
+                Route::namespace ($namespace)
                     ->group ($route_file);
             }
 
@@ -72,8 +99,8 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapWebRoutes ()
     {
         Route::middleware ('web')
-            ->namespace ($this->moduleNamespace . '\\' . $this->frontendNamespace)
-            ->group (module_path ('Core', 'routes/web.php'));
+            ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace())
+            ->group (module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/web.php'));
     }
 
     /**
@@ -87,7 +114,7 @@ class RouteServiceProvider extends ServiceProvider
     {
         Route::prefix ('api')
             ->middleware ('api')
-            ->namespace ($this->moduleNamespace . '\\' . $this->apiNamespace)
-            ->group (module_path ('Core', 'routes/api.php'));
+            ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace() . '\\Api')
+            ->group (module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/api.php'));
     }
 }
