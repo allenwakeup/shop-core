@@ -73,8 +73,8 @@ class CoreServiceProvider extends ServiceProvider
     protected function validateInternalModule () {
         $this->modulesInternal = $this->app->make ('modules.internal');
 
-        if(!isset ($modules_internal)){
-            throw new \Exception('Internal module ' . module_integration() . ' not found', "modules.internal");
+        if(!isset ($this->modulesInternal)){
+            throw new \Exception('Internal module ' . module_integration() . ' not found');
         }
     }
 

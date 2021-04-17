@@ -66,25 +66,23 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function mapAdminRoutes ()
-    {
+    protected function mapAdminRoutes () {
+        $route_file = module_path($this->moduleName, 'routes/') . $this->modulesInternal->getLowerName() . '/admin.php';
+        $namespace = $this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace();
         if (app ()->has ('laravellocalization')) {
             $route = Route::middleware ('localeSessionRedirect', 'localizationRedirect', 'localeViewPath');
             $laravel_localization = app ('laravellocalization')->setLocale ();
-            $route_file = module_path($this->moduleName, 'routes/') . $this->modulesInternal->getLowerName() . '/admin.php';
-            $namespace = $this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace();
             if (! empty ($laravel_localization)) {
                 $route->prefix ($laravel_localization);
-                $route->group (function () use ($route_file, $namespace)
-                {
-                    Route::namespace ($namespace)
-                        ->group ($route_file);
-                });
-            } else {
+            }
+            $route->group (function () use ($route_file, $namespace)
+            {
                 Route::namespace ($namespace)
                     ->group ($route_file);
-            }
-
+            });
+        } else {
+            Route::namespace ($namespace)
+                ->group ($route_file);
         }
 
     }
@@ -98,9 +96,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapWebRoutes ()
     {
-        Route::middleware ('web')
-            ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace())
-            ->group (module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/web.php'));
+        tap(module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/web.php'), function ($path) {
+            if(file_exists($path)){
+                Route::middleware ('web')
+                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace())
+                    ->group($path);
+            }
+        });
     }
 
     /**
@@ -112,9 +114,13 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected function mapApiRoutes ()
     {
-        Route::prefix ('api')
-            ->middleware ('api')
-            ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace() . '\\Api')
-            ->group (module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/api.php'));
+        tap(module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/api.php'), function ($path) {
+            if(file_exists($path)){
+                Route::prefix ('api')
+                    ->middleware ('api')
+                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace() . '\\Api')
+                    ->group($path);
+            }
+        });
     }
 }
