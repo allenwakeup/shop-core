@@ -13,5 +13,7 @@
     "files": [
         "src/helpers.php"
     ],
-    "requires": []
+    "requires": [],
+    "type": 1,
+    "version": "dev-master"
 }
