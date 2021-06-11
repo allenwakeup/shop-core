@@ -20,9 +20,7 @@ class Area extends Model
      */
     public static $searchField = [
         'code' => [
-            'showType' => 'xm-select-region',
-            'searchType' => '=',
-            'title' => '地区'
+            'searchType' => '='
         ],
         'name' => '名称',
         'short' => '简称',
@@ -30,44 +28,6 @@ class Area extends Model
         'description' => '描述'
     ];
 
-    /**
-     * 列表字段
-     *
-     * @var array
-     */
-    public static $listField = [
-        'region' => [
-            'title' => '行政地区',
-            'width' => 180,
-            'sort' => true,
-            'align' => 'center',
-            'templet' => '#regionText'
-        ],
-        'name' => [
-            'title' => '名称',
-            'width' => 120,
-            'sort' => true,
-        ],
-        'short' => [
-            'title' => '简称',
-            'width' => 80,
-            'sort' => true,
-        ],
-        'alias' => [
-            'title' => '别名',
-            'width' => 100,
-            'sort' => true,
-        ],
-        'display' => [
-            'title' => '显示',
-            'width' => 100,
-            'sort' => true,
-        ],
-        'description' => [
-            'title' => '描述',
-            'width' => 150,
-        ],
-    ];
 
     public function region ()
     {

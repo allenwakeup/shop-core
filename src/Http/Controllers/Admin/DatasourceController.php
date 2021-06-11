@@ -6,41 +6,41 @@
 namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-
-use Goodcatch\Modules\Core\Model\Admin\Area;
-use Goodcatch\Modules\Core\Repositories\Admin\AreaRepository;
-use Goodcatch\Modules\Qwshop\Http\Resources\Admin\ModuleResource\AreaCollection;
+use Goodcatch\Modules\Core\Model\Admin\Datasource;
+use Goodcatch\Modules\Core\Repositories\Admin\DatasourceRepository;
+use Goodcatch\Modules\Qwshop\Http\Resources\Admin\ModuleResource\DatasourceCollection;
 use Illuminate\Http\Request;
 
-class AreaController extends Controller
+class DatasourceController extends Controller
 {
 
-    protected $formNames = ['name', 'alias'];
+    protected $formNames = ['code', 'name', 'order', 'status', 'description', 'requires', 'options'];
 
     /**
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @param Area $model
+     * @param Datasource $model
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,Area $model)
+    public function index(Request $request,Datasource $model)
     {
+
         return $this->success(
-            new AreaCollection(AreaRepository::list(
-                    $request->per_page??30,
-                    $request->only($this->formNames)
-                )));
+            new DatasourceCollection(DatasourceRepository::list(
+                $request->per_page??30,
+                $request->only($this->formNames)
+            )));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param Area $model
+     * @param Datasource $model
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,Area $model)
+    public function store(Request $request,Datasource $model)
     {
         if($model->where('name',$request->name)->exists()){
             return $this->error(__('core::admins.area_existence'));
@@ -55,11 +55,11 @@ class AreaController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Area $model
+     * @param Datasource $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Area $model,$id)
+    public function show(Datasource $model,$id)
     {
         $info = $model->find($id);
         return $this->success($info);
@@ -69,11 +69,11 @@ class AreaController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param Area $model
+     * @param Datasource $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Area $model, $id)
+    public function update(Request $request,Datasource $model, $id)
     {
         if($model->where('name',$request->username)
             ->where('id','<>',$id)
@@ -91,11 +91,11 @@ class AreaController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Area $model
+     * @param Datasource $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Area $model,$id)
+    public function destroy(Datasource $model,$id)
     {
         $idArray = array_filter(explode(',',$id),function($item){
             return is_numeric($item);
@@ -104,4 +104,5 @@ class AreaController extends Controller
         $model->destroy($idArray);
         return $this->success([],__('base.success'));
     }
+
 }

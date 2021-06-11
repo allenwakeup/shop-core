@@ -13,31 +13,15 @@ use Goodcatch\Modules\Core\Model\Admin\Province;
 class AreaRepository extends BaseRepository
 {
 
-    public static function list($perPage, $condition = [], $keyword = null)
+    public static function list($perPage, $condition = [])
     {
-        $data = Area::query()
+        return Area::query()
             ->with (['region.city.province'])
-            ->where(function ($query) use ($condition, $keyword) {
+            ->where(function ($query) use ($condition) {
                 self::buildQuery($query, $condition);
-                if (! empty ($keyword))
-                {
-                    self::buildSelect($query, $condition, $keyword);
-                }
             })
             ->orderBy('id', 'desc')
             ->paginate($perPage);
-        $data->transform(function ($item) {
-            $item->editUrl = route('admin::' . module_route_prefix ('.') . 'core.area.edit', ['id' => $item->id]);
-            $item->deleteUrl = route('admin::' . module_route_prefix ('.') . 'core.area.delete', ['id' => $item->id]);
-            return $item;
-        });
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total(),
-            'data' => $data->items(),
-        ];
     }
 
     public static function select ($perPage, $condition = [], $select = 'province', $keyword = null)

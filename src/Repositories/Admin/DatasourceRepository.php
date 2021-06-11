@@ -10,30 +10,15 @@ use Goodcatch\Modules\Core\Model\Admin\Datasource;
 class DatasourceRepository extends BaseRepository
 {
 
-    public static function list ($perPage, $condition = [], $keyword = null)
+    public static function list($perPage, $condition = [])
     {
-        $data = Datasource::query ()
-            ->where (function ($query) use ($condition, $keyword) {
-                self::buildQuery ($query, $condition);
-                if (! empty ($keyword))
-                {
-                    self::buildSelect ($query, $condition, $keyword);
-                }
+        return Datasource::query()
+            ->with (['region.city.province'])
+            ->where(function ($query) use ($condition) {
+                self::buildQuery($query, $condition);
             })
-            ->orderBy ('id', 'desc')
-            ->paginate ($perPage);
-        $data->transform (function ($item) {
-            $item->editUrl = route ('admin::' . module_route_prefix ('.') . 'core.datasource.edit', ['id' => $item->id]);
-            $item->deleteUrl = route ('admin::' . module_route_prefix ('.') . 'core.datasource.delete', ['id' => $item->id]);
-            return $item;
-        });
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+            ->orderBy('id', 'desc')
+            ->paginate($perPage);
     }
 
     public static function add ($data)

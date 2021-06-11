@@ -5,13 +5,14 @@
 
 namespace Goodcatch\Modules\Core\Model\Admin;
 
-use Goodcatch\Modules\Lightcms\Model\Admin\Model as BaseModel;
+use Goodcatch\Modules\Laravel\Model\Model as BaseModel;
 
 abstract class Model extends BaseModel
 {
 
     /**
-     * @var string module table with prefix
+     * @return string module prefix of table name
+     *
      */
     protected function getModuleTablePrefix () {
         return 'core_';
