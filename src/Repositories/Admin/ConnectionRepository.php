@@ -9,6 +9,7 @@ use Goodcatch\Modules\Core\Model\Admin\Connection;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Schema;
 
 class ConnectionRepository extends BaseRepository
 {
@@ -68,7 +69,13 @@ class ConnectionRepository extends BaseRepository
     public static function all ()
     {
         return Cache::rememberForever (config('modules.cache.key') . '.core.connections', function () {
-            $value = Connection::ofEnabled ()->get ();
+
+            $connection = new Connection;
+            if(!Schema::exists($connection->getTable())){
+                return [];
+            }
+
+            $value = $connection::ofEnabled ()->get ();
             if ($value->isEmpty ()) {
                 return [];
             }

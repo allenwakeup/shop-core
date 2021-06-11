@@ -7,6 +7,5 @@ export default {
      * 模块化接口
      */
 
-    "goodcatchModule": baseUrl + "Admin/goodcatch/modules", // 模块化
-
+    "moduleCoreAreas": baseUrl + "Admin/goodcatch/m/core/areas", // 模块化
 };
