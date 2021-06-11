@@ -3,17 +3,17 @@
     "alias": "core",
     "description": "",
     "keywords": [],
-    "order": 0,
+    "order": 1,
     "providers": [
         "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"
     ],
     "aliases": {
-        "Goodcatch\\Modules\\Laravel\\Contracts\\Database\\ModuleDBConnectionService": "modules.service.connection"
+
     },
     "files": [
         "src/helpers.php"
     ],
     "requires": [],
-    "type": 1,
-    "version": "dev-master"
+    "version": "0.1.0",
+    "type": 1
 }

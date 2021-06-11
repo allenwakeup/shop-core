@@ -2,9 +2,7 @@
 
 namespace Goodcatch\Modules\Core\Providers;
 
-use Illuminate\Support\Facades\Route;
-use Goodcatch\Modules\Providers\RouteServiceProvider as ServiceProvider;
-use Illuminate\Contracts\Container\BindingResolutionException;
+use Goodcatch\Modules\Qwshop\Providers\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -19,108 +17,12 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected $moduleNameLower = 'core';
 
-    /**
-     * internal module
-     * @var mixed
-     */
-    protected $modulesInternal;
 
     /**
      * The module namespace to assume when generating URLs to actions.
      *
      * @var string
      */
-    protected $moduleNamespace = 'Goodcatch\Modules\Core';
+    protected $namespace = 'Goodcatch\\Modules\\Core\\Http\\Controllers\\';
 
-    /**
-     * RouteServiceProvider constructor.
-     * @param $app
-     * @throws BindingResolutionException
-     */
-    public function __construct($app)
-    {
-        parent::__construct($app);
-
-        $this->modulesInternal = $this->app->make('modules.internal');
-
-    }
-
-    /**
-     * Define the routes for the application.
-     *
-     * @return void
-     */
-    public function map ()
-    {
-        $this->mapApiRoutes ();
-
-        $this->mapWebRoutes ();
-
-        $this->mapAdminRoutes ();
-    }
-
-    /**
-     * Define the "admin" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @return void
-     */
-    protected function mapAdminRoutes () {
-        $route_file = module_path($this->moduleName, 'routes/') . $this->modulesInternal->getLowerName() . '/admin.php';
-        $namespace = $this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace();
-        if (app ()->has ('laravellocalization')) {
-            $route = Route::middleware ('localeSessionRedirect', 'localizationRedirect', 'localeViewPath');
-            $laravel_localization = app ('laravellocalization')->setLocale ();
-            if (! empty ($laravel_localization)) {
-                $route->prefix ($laravel_localization);
-            }
-            $route->group (function () use ($route_file, $namespace)
-            {
-                Route::namespace ($namespace)
-                    ->group ($route_file);
-            });
-        } else {
-            Route::namespace ($namespace)
-                ->group ($route_file);
-        }
-
-    }
-
-    /**
-     * Define the "web" routes for the application.
-     *
-     * These routes all receive session state, CSRF protection, etc.
-     *
-     * @return void
-     */
-    protected function mapWebRoutes ()
-    {
-        tap(module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/web.php'), function ($path) {
-            if(file_exists($path)){
-                Route::middleware ('web')
-                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace())
-                    ->group($path);
-            }
-        });
-    }
-
-    /**
-     * Define the "api" routes for the application.
-     *
-     * These routes are typically stateless.
-     *
-     * @return void
-     */
-    protected function mapApiRoutes ()
-    {
-        tap(module_path($this->moduleName, 'routes/' . $this->modulesInternal->getLowerName() . '/api.php'), function ($path) {
-            if(file_exists($path)){
-                Route::prefix ('api')
-                    ->middleware ('api')
-                    ->namespace ($this->moduleNamespace . '\\Http\\Controllers\\' . $this->modulesInternal->getNamespace() . '\\Api')
-                    ->group($path);
-            }
-        });
-    }
 }

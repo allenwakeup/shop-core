@@ -41,12 +41,7 @@ class DatabaseServiceProvider extends ServiceProvider
      */
     public function register ()
     {
-        $this->app->singleton (ModuleDBConnectionService::class, function ($app) {
 
-            $manager = new DBConnectionManager ($app, $app ['config']->get($this->moduleNameLower, []));
-
-            return $manager;
-        });
     }
 
     protected function loadConnections ()

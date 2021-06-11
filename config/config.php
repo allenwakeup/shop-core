@@ -35,26 +35,6 @@ return [
             'right_id' => 'right_id',
 
         ]
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Defined module services
-    |--------------------------------------------------------------------------
-    |
-    | You can define module service for different provider in environment file.
-    |
-    */
-    'modules' => [
-        'service' => [
-            'connection' => [
-                'driver' => env ('MODULE_INTEGRATE', 'lightcms'),
-                'providers' => [
-                    'lightcms'  => 'Goodcatch\\Modules\\Core\\Contracts\\Database\\LightcmsConnectionProvider',
-                    'dcat'      => 'Goodcatch\\Modules\\Core\\Contracts\\Database\\DcatConnectionProvider',
-                ]
-            ],
-        ],
     ]
 
 ];

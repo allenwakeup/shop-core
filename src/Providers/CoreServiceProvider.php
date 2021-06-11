@@ -11,11 +11,6 @@ use Illuminate\Database\Eloquent\Factory;
 
 class CoreServiceProvider extends ServiceProvider
 {
-    /**
-     * internal module
-     * @var mixed
-     */
-    protected $modulesInternal;
 
     /**
      * @var string $moduleName
@@ -36,7 +31,6 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->registerTranslations();
         $this->registerConfig();
-        $this->registerViews();
         $this->registerFactories();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'database/migrations'));
 
@@ -54,28 +48,14 @@ class CoreServiceProvider extends ServiceProvider
     public function register()
     {
 
-        $this->validateInternalModule();
 
         $this->app->register(RouteServiceProvider::class);
+        $this->app->register(ResourcesServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(DataMapServiceProvider::class);
 
         $this->registerMailViews();
 
-    }
-
-
-    /**
-     * make sure the internal module present
-     *
-     * @throws \Exception
-     */
-    protected function validateInternalModule () {
-        $this->modulesInternal = $this->app->make ('modules.internal');
-
-        if(!isset ($this->modulesInternal)){
-            throw new \Exception('Internal module ' . module_integration() . ' not found');
-        }
     }
 
 
@@ -92,24 +72,6 @@ class CoreServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             module_path($this->moduleName, 'config/config.php'), $this->moduleNameLower
         );
-    }
-
-    /**
-     * Register views.
-     *
-     * @return void
-     */
-    public function registerViews()
-    {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-
-        $sourcePath = module_path($this->moduleName, 'resources/views/' . module_integration());
-
-        $this->publishes([
-            $sourcePath => $viewPath
-        ], ['views', $this->moduleNameLower . '-views']);
-
-        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
     }
 
     public function registerMailViews()
@@ -133,7 +95,7 @@ class CoreServiceProvider extends ServiceProvider
         if (is_dir($langPath)) {
             $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
         } else {
-            $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang/' . $this->modulesInternal->getLowerName()), $this->moduleNameLower);
+            $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang'), $this->moduleNameLower);
         }
     }
 
@@ -159,14 +121,4 @@ class CoreServiceProvider extends ServiceProvider
         return [];
     }
 
-    private function getPublishableViewPaths(): array
-    {
-        $paths = [];
-        foreach (\Config::get('view.paths') as $path) {
-            if (is_dir($path . '/modules/' . $this->moduleNameLower)) {
-                $paths[] = $path . '/modules/' . $this->moduleNameLower;
-            }
-        }
-        return $paths;
-    }
 }

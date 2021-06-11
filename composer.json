@@ -1,12 +1,33 @@
 {
     "name": "goodcatch/laravel-module-core",
     "description": "goodcatch laravel module - core, the most practically and basic module for modules",
+    "version": "0.1.0",
+    "type": "library",
+    "license": "MIT",
     "authors": [
         {
-            "name": "Allen Li",
-            "email": "ali@goodcatch.cn"
+            "name": "allen",
+            "email": "ali@goodcatch.cn",
+            "homepage": "http://note.goodcatch.cn/it/dev-laravel/laravel-modules/laravel-module-core",
+            "role": "Developer"
         }
     ],
+    "require": {
+        "php": ">=7.3"
+    },
+    "require-dev": {
+        "ext-json": "*",
+        "illuminate/support": "^8.0",
+        "laravel/framework": "^8.0",
+        "elendev/nexus-composer-push": "^0.4.0",
+        "laravel/helpers": "^1.4.0",
+        "goodcatch/laravel-modules-qwshop": "dev-master"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "extra": {
         "nexus-push": {
             "url": "https://repos.goodcatch.cn/repository/composer",
@@ -29,19 +50,13 @@
             "database/seeds"
         ]
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://repos.goodcatch.cn/repository/goodcatch-composer-group/"
+        },
+        {
+            "packagist.org": false
         }
-    },
-    "require-dev": {
-        "illuminate/support": "^6.0",
-        "laravel/framework": "^6.0",
-        "elendev/nexus-composer-push": "^0.2.2",
-        "laravel/helpers": "^1.1",
-        "laravel/laravel": "^6.0",
-        "mcamara/laravel-localization": "^1.5",
-        "goodcatch/laravel-modules": "dev-master",
-        "dcat/laravel-admin": "2.*"
-    }
+    ]
 }
