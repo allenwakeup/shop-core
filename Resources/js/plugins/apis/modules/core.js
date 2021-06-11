@@ -8,5 +8,4 @@ export default {
      */
 
     "moduleCoreAreas": baseUrl + "Admin/goodcatch/m/core/areas", // 模块化
-
 };
