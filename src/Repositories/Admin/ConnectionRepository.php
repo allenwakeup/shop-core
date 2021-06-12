@@ -71,7 +71,7 @@ class ConnectionRepository extends BaseRepository
         return Cache::rememberForever (config('modules.cache.key') . '.core.connections', function () {
 
             $connection = new Connection;
-            if(!Schema::exists($connection->getTable())){
+            if(!Schema::hasTable($connection->getTable())){
                 return [];
             }
 

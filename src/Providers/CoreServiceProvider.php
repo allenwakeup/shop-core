@@ -31,7 +31,6 @@ class CoreServiceProvider extends ServiceProvider
     {
         $this->registerTranslations();
         $this->registerConfig();
-        $this->registerFactories();
         $this->loadMigrationsFrom(module_path($this->moduleName, 'database/migrations'));
 
 
@@ -96,18 +95,6 @@ class CoreServiceProvider extends ServiceProvider
             $this->loadTranslationsFrom($langPath, $this->moduleNameLower);
         } else {
             $this->loadTranslationsFrom(module_path($this->moduleName, 'resources/lang'), $this->moduleNameLower);
-        }
-    }
-
-    /**
-     * Register an additional directory of factories.
-     *
-     * @return void
-     */
-    public function registerFactories()
-    {
-        if (! app()->environment('production') && $this->app->runningInConsole()) {
-            app(Factory::class)->load(module_path($this->moduleName, 'database/factories'));
         }
     }
 
