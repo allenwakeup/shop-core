@@ -25,4 +25,8 @@ class RouteServiceProvider extends ServiceProvider
      */
     protected $namespace = 'Goodcatch\\Modules\\Core\\Http\\Controllers\\';
 
+    protected function initRoute ()
+    {
+        $this->path = __DIR__ . '/../../routes';
+    }
 }

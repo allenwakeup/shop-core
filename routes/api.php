@@ -16,10 +16,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('Admin')->group(function(){
     Route::namespace('Admin')->prefix('goodcatch')->group(function(){
-        Route::group(['middleware'=>'jwt.admin'], function(){
-            Route::apiResources([
-                'areas'=>'ModuleController', // 系统模块化
-            ]);
+        Route::prefix(module_route_prefix())->group(function(){
+            Route::prefix('core')->group(function(){
+                Route::group(['middleware'=>'jwt.admin'], function(){
+                    Route::apiResources([
+                        'areas'=>'AreaController', // 区域
+                    ]);
+                });
+            });
         });
     });
 
