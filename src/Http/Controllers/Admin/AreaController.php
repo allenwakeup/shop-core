@@ -7,101 +7,100 @@ namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 
-use Goodcatch\Modules\Core\Model\Admin\Area;
+use Goodcatch\Modules\Core\Http\Requests\Admin\AreaRequest;
 use Goodcatch\Modules\Core\Repositories\Admin\AreaRepository;
-use Goodcatch\Modules\Qwshop\Http\Resources\Admin\ModuleResource\AreaCollection;
-use Illuminate\Http\Request;
+use Goodcatch\Modules\Core\Http\Resources\Admin\AreaResource\AreaCollection;
+use Illuminate\Database\QueryException;
 
 class AreaController extends Controller
 {
 
-    protected $formNames = ['name', 'alias'];
+    protected $formNames = ['code', 'name', 'short', 'alias', 'display', 'description', 'province_id', 'city_id'];
 
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
-     * @param Area $model
+     * @param AreaRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,Area $model)
+    public function index(AreaRequest $request)
     {
-        return $this->success(
-            new AreaCollection(AreaRepository::list(
+        $type = $request->type;
+        $conditions = $request->only($this->formNames);
+
+        if($type === 'selector'){
+            return $this->success(AreaRepository::select($conditions, $request->get($type), $request->keyword));
+        } else {
+            return $this->success(
+                new AreaCollection(AreaRepository::list(
                     $request->per_page??30,
-                    $request->only($this->formNames)
+                    $conditions
                 )));
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Area $model
+     * @param AreaRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,Area $model)
+    public function store(AreaRequest $request)
     {
-        if($model->where('name',$request->name)->exists()){
-            return $this->error(__('core::admins.area_existence'));
+        try{
+            return AreaRepository::add($request->only($this->formNames));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
         }
-        $model = $model->create([
-            'name'      =>  $request->username,
-        ]);
-
-        return $this->success([],__('base.success'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Area $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Area $model,$id)
+    public function show($id)
     {
-        $info = $model->find($id);
-        return $this->success($info);
+        return $this->success(AreaRepository::find($id));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Area $model
+     * @param AreaRequest $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Area $model, $id)
+    public function update(AreaRequest $request,$id)
     {
-        if($model->where('name',$request->username)
-            ->where('id','<>',$id)
-            ->exists()
-        ){
-            return $this->error(__('admins.module_existence'));
-        }
+        $data = $request->only($this->formNames);
 
-        $model = $model->find($id);
-        $model->name = $request->name;
-        $model->save();
-        return $this->success([],__('base.success'));
+        try{
+            AreaRepository::update($id, $data);
+            return $this->success([],__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Area $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Area $model,$id)
+    public function destroy($id)
     {
         $idArray = array_filter(explode(',',$id),function($item){
             return is_numeric($item);
         });
 
-        $model->destroy($idArray);
-        return $this->success([],__('base.success'));
+        try{
+            AreaRepository::delete($idArray);
+            return $this->success([],__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
+        }
     }
 }

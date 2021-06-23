@@ -16,7 +16,7 @@ class AreaRequest extends FormRequest
     public function rules()
     {
         return [
-            'code' => 'required|max:20|exists:core_county,county_id',
+            'code' => 'required|max:20|exists:county,county_id',
             'name' => 'required|max:50',
             'short' => 'max:50',
             'alias' => 'max:50',

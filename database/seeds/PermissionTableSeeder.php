@@ -20,6 +20,10 @@ class PermissionTableSeeder extends Seeder
                     [
                         'name' => '地区管理',
                         'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'areas'),
+                    ],
+                    [
+                        'name' => '数据源管理',
+                        'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'datasources'),
                     ]
                 ]
             ]
@@ -30,6 +34,9 @@ class PermissionTableSeeder extends Seeder
         return [
             $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '地区管理') => [
                 'areas'
+            ],
+            $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据源管理') => [
+                'datasources'
             ]
         ];
     }

@@ -29,9 +29,9 @@ class Area extends Model
     ];
 
 
-    public function region ()
+    public function county ()
     {
-        return $this->hasOne ('Goodcatch\Modules\Core\Model\Admin\County', 'county_id', 'code');
+        return $this->belongsTo('Goodcatch\Modules\Core\Model\Admin\County', 'code', 'county_id');
     }
 
 }

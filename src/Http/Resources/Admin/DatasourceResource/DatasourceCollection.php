@@ -1,6 +1,6 @@
 <?php
 
-namespace Goodcatch\Modules\Qwshop\Http\Resources\Admin\ModuleResource;
+namespace Goodcatch\Modules\Core\Http\Resources\Admin\DatasourceResource;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

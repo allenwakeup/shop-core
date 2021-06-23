@@ -21,6 +21,7 @@ Route::prefix('Admin')->group(function(){
                 Route::group(['middleware'=>'jwt.admin'], function(){
                     Route::apiResources([
                         'areas'=>'AreaController', // 区域
+                        'datasources'=>'DatasourceController', // 区域
                     ]);
                 });
             });

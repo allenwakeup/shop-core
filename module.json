@@ -3,6 +3,7 @@
     "alias": "core",
     "description": "",
     "keywords": [],
+    "priority": 1,
     "order": 1,
     "providers": [
         "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"

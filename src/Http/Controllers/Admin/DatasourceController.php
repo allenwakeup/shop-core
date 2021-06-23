@@ -6,10 +6,11 @@
 namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Goodcatch\Modules\Core\Http\Requests\Admin\DatasourceRequest;
 use Goodcatch\Modules\Core\Model\Admin\Datasource;
 use Goodcatch\Modules\Core\Repositories\Admin\DatasourceRepository;
-use Goodcatch\Modules\Qwshop\Http\Resources\Admin\ModuleResource\DatasourceCollection;
-use Illuminate\Http\Request;
+use Goodcatch\Modules\Core\Http\Resources\Admin\DatasourceResource\DatasourceCollection;
+use Illuminate\Database\QueryException;
 
 class DatasourceController extends Controller
 {
@@ -19,11 +20,11 @@ class DatasourceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param DatasourceRequest $request
      * @param Datasource $model
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request,Datasource $model)
+    public function index(DatasourceRequest $request,Datasource $model)
     {
 
         return $this->success(
@@ -36,73 +37,66 @@ class DatasourceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Datasource $model
+     * @param DatasourceRequest $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,Datasource $model)
+    public function store(DatasourceRequest $request)
     {
-        if($model->where('name',$request->name)->exists()){
-            return $this->error(__('core::admins.area_existence'));
+        try{
+            return DatasourceRepository::add($request->only($this->formNames));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
         }
-        $model = $model->create([
-            'name'      =>  $request->username,
-        ]);
-
-        return $this->success([],__('base.success'));
     }
 
     /**
      * Display the specified resource.
      *
-     * @param Datasource $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Datasource $model,$id)
+    public function show($id)
     {
-        $info = $model->find($id);
-        return $this->success($info);
+        return $this->success(DatasourceRepository::find($id));
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param Datasource $model
+     * @param DatasourceRequest $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Datasource $model, $id)
+    public function update(DatasourceRequest $request, $id)
     {
-        if($model->where('name',$request->username)
-            ->where('id','<>',$id)
-            ->exists()
-        ){
-            return $this->error(__('admins.module_existence'));
-        }
+        $data = $request->only($this->formNames);
 
-        $model = $model->find($id);
-        $model->name = $request->name;
-        $model->save();
-        return $this->success([],__('base.success'));
+        try{
+            DatasourceRepository::update($id, $data);
+            return $this->success([],__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
+        }
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Datasource $model
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Datasource $model,$id)
+    public function destroy($id)
     {
         $idArray = array_filter(explode(',',$id),function($item){
             return is_numeric($item);
         });
 
-        $model->destroy($idArray);
-        return $this->success([],__('base.success'));
+        try{
+            DatasourceRepository::delete($idArray);
+            return $this->success([],__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error([],__('base.error') . $e->getMessage());
+        }
     }
 
 }

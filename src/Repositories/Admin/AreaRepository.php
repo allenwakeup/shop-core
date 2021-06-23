@@ -16,7 +16,7 @@ class AreaRepository extends BaseRepository
     public static function list($perPage, $condition = [])
     {
         return Area::query()
-            ->with (['region.city.province'])
+            ->with (['county.city.province'])
             ->where(function ($query) use ($condition) {
                 self::buildQuery($query, $condition);
             })
@@ -24,7 +24,7 @@ class AreaRepository extends BaseRepository
             ->paginate($perPage);
     }
 
-    public static function select ($perPage, $condition = [], $select = 'province', $keyword = null)
+    public static function select ($condition = [], $select = 'province', $keyword = null)
     {
 
         $select_class = [
@@ -35,34 +35,34 @@ class AreaRepository extends BaseRepository
 
         if (isset ($select_class))
         {
-            $data = (app ()->make ($select_class))::query ()
+            $data = $select_class::query ()
+                ->select([
+                    'name',
+                    'name as label',
+                    \DB::raw("'{$select}' as cascader"),
+                    "{$select}_id as value",
+                    "{$select}_id as code"
+                ])
                 ->where(function ($query) use ($condition, $keyword) {
                     self::buildQuery ($query, $condition);
                     if (! empty ($keyword))
                     {
-                        self::buildSelect ($query, $condition, $keyword);
+                        $query->where('name', 'like', "%{$keyword}%");
                     }
                 })
                 ->orderBy ($select . '_id', 'asc')
-                ->paginate ($perPage);
-
-            $data->transform (function ($item) use ($select) {
-                $item->value = $item [$select . '_id'];
-                if ($select !== 'county')
-                {
-                    $item->children = [];
-                }
-                $item->cascader = $select;
-                return $item;
-            });
+                ->get()
+                ->transform (function ($item) use ($select) {
+                    if ($select !== 'county')
+                    {
+                        $item->isLeaf = false;
+                    }
+                    return $item;
+                });
+            return $data->all();
         }
 
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+        return [];
     }
 
     public static function add($data)
