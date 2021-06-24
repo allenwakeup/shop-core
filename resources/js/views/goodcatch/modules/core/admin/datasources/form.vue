@@ -8,8 +8,26 @@
         <div class="admin_form">
             <a-form-model :label-col="{ span: 5 }" :wrapper-col="{ span: 12 }">
 
+                <a-form-model-item label="代码">
+                    <a-input v-model="info.code"></a-input>
+                </a-form-model-item>
                 <a-form-model-item label="名称">
                     <a-input v-model="info.name"></a-input>
+                </a-form-model-item>
+                <a-form-model-item label="描述">
+                    <a-textarea v-model="info.description" :auto-size="{ minRows: 3, maxRows: 5 }" />
+                </a-form-model-item>
+                <a-form-model-item label="必填项">
+                    <a-textarea v-model="info.requires" :auto-size="{ minRows: 3, maxRows: 5 }" />
+                </a-form-model-item>
+                <a-form-model-item label="选填项">
+                    <a-textarea v-model="info.options" :auto-size="{ minRows: 3, maxRows: 5 }" />
+                </a-form-model-item>
+                <a-form-model-item label="排序">
+                    <a-input-number v-model="info.order" :min="0" @change="onChangeOrder" />
+                </a-form-model-item>
+                <a-form-model-item label="状态">
+                    <a-switch checked-children="启用" un-checked-children="禁用" default-checked @change="onChangeStatus"/>
                 </a-form-model-item>
                 <a-form-model-item :wrapper-col="{ span: 12, offset: 5 }">
                     <a-button type="primary" @click="handleSubmit">提交</a-button>
@@ -28,7 +46,13 @@ export default {
       return {
           cascader_area: [],
           info:{
-              name: ''
+              code: '',
+              name: '',
+              description: '',
+              requires: '',
+              options: '',
+              order: 0,
+              status: 1
 
           },
           id:0,
@@ -40,11 +64,18 @@ export default {
         handleSubmit(){
 
             // 验证代码处
+            if(this.$isEmpty(this.info.code)){
+                return this.$message.error('代码不能为空');
+            }
+            if(this.$isEmpty(this.info.code)){
+                return this.$message.error('代码不能为空');
+            }
+
             if(this.$isEmpty(this.info.name)){
                 return this.$message.error('名称不能为空');
             }
 
-            let api = this.$apiHandle(this.$api.moduleCoreAreas,this.id);
+            let api = this.$apiHandle(this.$api.moduleCoreDatasources,this.id);
             if(api.status){
                 this.$put(api.url,this.info).then(res=>{
                     if(res.code == 200){
@@ -66,6 +97,12 @@ export default {
             }
 
 
+        },
+        onChangeOrder(value){
+            this.info.order = value;
+        },
+        onChangeStatus(checked){
+            this.info.status = checked ? 1 : 0;
         },
         get_info(){
             this.$get(this.$api.moduleCoreDatasources+'/'+this.id).then(res=>{
