@@ -11,6 +11,7 @@ use Goodcatch\Modules\Core\Http\Requests\Admin\AreaRequest;
 use Goodcatch\Modules\Core\Repositories\Admin\AreaRepository;
 use Goodcatch\Modules\Core\Http\Resources\Admin\AreaResource\AreaCollection;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 
 class AreaController extends Controller
 {
@@ -20,10 +21,10 @@ class AreaController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param AreaRequest $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index(AreaRequest $request)
+    public function index(Request $request)
     {
         $type = $request->type;
         $conditions = $request->only($this->formNames);
@@ -48,7 +49,7 @@ class AreaController extends Controller
     public function store(AreaRequest $request)
     {
         try{
-            return AreaRepository::add($request->only($this->formNames));
+            return $this->success(AreaRepository::add($request->only($this->formNames)), __('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -77,8 +78,7 @@ class AreaController extends Controller
         $data = $request->only($this->formNames);
 
         try{
-            AreaRepository::update($id, $data);
-            return $this->success([],__('base.success'));
+            return $this->success(AreaRepository::update($id, $data), __('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -97,8 +97,7 @@ class AreaController extends Controller
         });
 
         try{
-            AreaRepository::delete($idArray);
-            return $this->success([],__('base.success'));
+            return $this->success(AreaRepository::delete($idArray), __('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }

@@ -11,6 +11,7 @@ use Goodcatch\Modules\Core\Model\Admin\Datasource;
 use Goodcatch\Modules\Core\Repositories\Admin\DatasourceRepository;
 use Goodcatch\Modules\Core\Http\Resources\Admin\DatasourceResource\DatasourceCollection;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
 
 class DatasourceController extends Controller
 {
@@ -20,11 +21,11 @@ class DatasourceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param DatasourceRequest $request
+     * @param \Illuminate\Http\Request $request
      * @param Datasource $model
      * @return \Illuminate\Http\Response
      */
-    public function index(DatasourceRequest $request,Datasource $model)
+    public function index(Request $request)
     {
 
         return $this->success(
@@ -43,7 +44,7 @@ class DatasourceController extends Controller
     public function store(DatasourceRequest $request)
     {
         try{
-            return DatasourceRepository::add($request->only($this->formNames));
+            $this->success(DatasourceRepository::add($request->only($this->formNames)),__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -72,8 +73,7 @@ class DatasourceController extends Controller
         $data = $request->only($this->formNames);
 
         try{
-            DatasourceRepository::update($id, $data);
-            return $this->success([],__('base.success'));
+            return $this->success(DatasourceRepository::update($id, $data),__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -92,8 +92,7 @@ class DatasourceController extends Controller
         });
 
         try{
-            DatasourceRepository::delete($idArray);
-            return $this->success([],__('base.success'));
+            return $this->success(DatasourceRepository::delete($idArray),__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }

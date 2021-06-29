@@ -10,9 +10,9 @@ use Illuminate\Support\Str;
 
 class DatabaseRepository extends BaseRepository
 {
-    public static function listTable ($perPage, $page, $keyword = null)
+    public static function listTable ($keyword = null)
     {
-        $data = \collect (DB::select ('select * from information_schema.tables where  table_type = \'BASE TABLE\''))
+        return \collect (DB::select ('select * from information_schema.tables where  table_type = \'BASE TABLE\''))
             ->reduce (function ($arr, $table) use ($keyword) {
 
                 $item = [
@@ -35,36 +35,27 @@ class DatabaseRepository extends BaseRepository
                 }
 
                 return $arr;
-                }, \collect ([]));
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->count (),
-            'data' => $data->slice ($page * $perPage, $perPage)->values ()->all (),
-        ];
+                }, \collect ([]))
+            ->values ()
+            ->all ();
     }
-    public static function listColumn ($perPage, $page, $table, $keyword = null)
+
+    public static function listColumn ($table, $keyword = null)
     {
-        $data = \collect (DB::select ("SHOW COLUMNS FROM `{$table}`;"))
-        ->filter (function ($item) use ($keyword) {
-            if (! empty ($keyword))
-            {
-                if (Str::contains($item->Field, $keyword))
+        return \collect (DB::select ("SHOW COLUMNS FROM `{$table}`;"))
+            ->filter (function ($item) use ($keyword) {
+                if (! empty ($keyword))
                 {
+                    if (Str::contains($item->Field, $keyword))
+                    {
+                        return $item;
+                    }
+                } else {
                     return $item;
                 }
-            } else {
-                return $item;
-            }
 
-        });
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->count (),
-            'data' => $data->slice ($page * $perPage, $perPage)->values ()->all (),
-        ];
+            })
+            ->values ()
+            ->all ();
     }
 }

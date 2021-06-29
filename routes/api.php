@@ -17,12 +17,15 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('Admin')->group(function(){
     Route::namespace('Admin')->prefix('goodcatch')->group(function(){
         Route::prefix(module_route_prefix())->group(function(){
-            Route::prefix('core')->group(function(){
+            Route::prefix('core')->name('core.')->group(function(){
                 Route::group(['middleware'=>'jwt.admin'], function(){
                     Route::apiResources([
                         'areas'=>'AreaController', // 区域
                         'datasources'=>'DatasourceController', // 区域
+                        'connections'=>'ConnectionController', // 连接
                     ]);
+                    Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
+                    Route::get('/connections/test', 'DatabaseController@test')->name('connections.test'); // 数据库
                 });
             });
         });

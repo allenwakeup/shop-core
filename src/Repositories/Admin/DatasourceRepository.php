@@ -13,7 +13,6 @@ class DatasourceRepository extends BaseRepository
     public static function list($perPage, $condition = [])
     {
         return Datasource::query()
-            ->with (['region.city.province'])
             ->where(function ($query) use ($condition) {
                 self::buildQuery($query, $condition);
             })

@@ -51,9 +51,8 @@ export default {
               description: '',
               requires: '',
               options: '',
-              order: 0,
+              order: 1,
               status: 1
-
           },
           id:0,
       };
@@ -87,7 +86,7 @@ export default {
                 })
             }else{
                 this.$post(api.url,this.info).then(res=>{
-                    if(res.code == 200){
+                    if(res.code == 200 || res.code == 201){
                         this.$message.success(res.msg)
                         return this.$router.back();
                     }else{

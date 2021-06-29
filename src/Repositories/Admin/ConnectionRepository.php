@@ -21,27 +21,15 @@ class ConnectionRepository extends BaseRepository
             ->with ('datasource')
             ->where (function ($query) use ($condition, $keyword) {
                 self::buildQuery ($query, $condition);
-                if (! empty ($keyword))
-                {
-                    self::buildSelect ($query, $condition, $keyword);
-                }
             })
             ->orderBy ('id', 'desc')
             ->paginate ($perPage);
         $data->transform (function ($item) {
-            $item->editUrl = route ('admin::' . module_route_prefix ('.') . 'core.connection.edit', ['id' => $item->id]);
-            $item->deleteUrl = route ('admin::' . module_route_prefix ('.') . 'core.connection.delete', ['id' => $item->id]);
-            $item->detailUrl = route ('admin::' . module_route_prefix ('.') . 'core.connection.detail', ['id' => $item->id]);
             $item->typeText = Arr::get (Connection::TYPE, $item->type, '--');
             return $item;
         });
 
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+        return $data;
     }
 
     public static function add ($data)
