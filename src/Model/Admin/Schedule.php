@@ -241,6 +241,6 @@ class Schedule extends Model
 
     public function logs ()
     {
-        return $this->hasMany ('App\Model\Admin\Log', 'user_id', 'id');
+        return $this->hasMany ('Goodcatch\Modules\Core\Model\Admin\ScheduleLog', 'schedule_id', 'id');
     }
 }

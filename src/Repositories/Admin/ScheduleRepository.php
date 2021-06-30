@@ -5,57 +5,48 @@
 
 namespace Goodcatch\Modules\Core\Repositories\Admin;
 
+
 use Goodcatch\Modules\Core\Model\Admin\Schedule;
 use Carbon\Carbon;
 use Illuminate\Support\Arr;
 
 class ScheduleRepository extends BaseRepository
 {
+    const JOBS_TYPES = [
+        'Goodcatch\Modules\Core\Jobs\ExchangeData' => '数据交换',
+        'Goodcatch\Modules\Core\Jobs\ExchangePeriodData' => '时间段数据交换',
+        'Goodcatch\Modules\Core\Jobs\DoubleCheckData' => '数据校验'
+
+    ];
+
     public static function list ($perPage, $condition = [], $keyword = null)
     {
-
-        $jobs = \collect (light_dictionary('CORE_DICT_SCHEDULE_JOBS'))->reduce(
-            function ($arr, $item) {
-                $arr [$item ['id']] = $item ['name'];
-                return $arr;
-            }, []
-        );
-
         $data = Schedule::query ()
             ->with (['logs' => function ($query) {
                 $query
                     ->whereDate ('created_at', Carbon::today ())
-                    ->where ('type', 1)
                     ->orderBy ('created_at', 'desc');
             }])
             ->where (function ($query) use ($condition, $keyword) {
                 self::buildQuery ($query, $condition);
                 if (! empty ($keyword))
                 {
-                    self::buildSelect ($query, $condition, $keyword);
+                    $query->orWhere('name', 'like', "%$keyword%");
                 }
             })
             ->orderBy ('order', 'desc')
             ->paginate ($perPage);
 
-        $data->transform (function ($item) use ($jobs) {
-            $item->editUrl = route ('admin::' . module_route_prefix ('.') . 'core.schedule.edit', ['id' => $item->id]);
-            $item->deleteUrl = route ('admin::' . module_route_prefix ('.') . 'core.schedule.delete', ['id' => $item->id]);
-            $item->detailUrl = route ('admin::' . module_route_prefix ('.') . 'core.schedule.detail', ['id' => $item->id]);
-            if (Arr::has ($jobs, $item->input))
+        $data->transform (function ($item) {
+            if (Arr::has (self::JOBS_TYPES, $item->input))
             {
-                $item->inputText = 'Queue ' . Arr::get ($jobs, $item->input, '--');
+                $item->inputText = 'Queue ' . Arr::get (self::JOBS_TYPES, $item->input, '--');
             }
             $item->schedule_type_text = Arr::get (Schedule::TYPE, $item->schedule_type, '--');
             return $item;
         });
 
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+        return $data;
     }
 
     public static function add ($data)

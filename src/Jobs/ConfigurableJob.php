@@ -2,17 +2,19 @@
 
 namespace Goodcatch\Modules\Core\Jobs;
 
-use Goodcatch\Modules\LightCms\Jobs\AbsRateLimitedGroup;
+use Goodcatch\Modules\Core\Model\Admin\ScheduleLog;
+use Goodcatch\Modules\Laravel\Jobs\Middleware\RateLimited;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
-class ConfigurableJob extends AbsRateLimitedGroup
+class ConfigurableJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -60,7 +62,6 @@ class ConfigurableJob extends AbsRateLimitedGroup
 
     public $scheduleLogId = 0;
     public $scheduleLogName = '';
-    public $scheduleLogType = 1;
     public $schedule_output = [];
     public $schedule_failed = false;
 
@@ -121,6 +122,12 @@ class ConfigurableJob extends AbsRateLimitedGroup
         $this->init ();
     }
 
+    public function middleware()
+    {
+        return [new RateLimited];
+    }
+
+
     /**
      * Initiate properties
      */
@@ -140,6 +147,17 @@ class ConfigurableJob extends AbsRateLimitedGroup
     }
 
     /**
+     * 延迟写入数据库
+     *
+     * @param array|null $data
+     */
+    protected function writeSysLogs (array $data)
+    {
+        dispatch (new WriteScheduleLog ($data))->onQueue('low');
+    }
+
+
+    /**
      * Execute the job.
      * 监控料品是否更新，并采取措施
      * 例如与远端数据同步或者数据校验
@@ -157,9 +175,8 @@ class ConfigurableJob extends AbsRateLimitedGroup
         if (! empty ($this->run_if_previous_failure))
         {
             $run_if_previous_failure = $this->transDT ($this->run_if_previous_failure);
-            $schedule_logs = \App\Model\Admin\Log::query ()
-                ->where ('user_id', $this->scheduleLogId)
-                ->where ('type', $this->scheduleLogType)
+            $schedule_logs = ScheduleLog::query ()
+                ->where ('schedule_id', $this->scheduleLogId)
                 ->whereDate ('created_at', '>=', $run_if_previous_failure)
                 ->whereDate ('created_at', '<', Carbon::now ()->toDateTimeString ())
                 ->orderBy('created_at', 'desc')
@@ -334,13 +351,9 @@ class ConfigurableJob extends AbsRateLimitedGroup
     {
         $now = Carbon::now ();
         $this->writeSysLogs ([
-            'user_id' => $this->scheduleLogId,
-            'user_name' => $this->scheduleLogName,
-            'url' => get_class ($this),
-            'ua' => $this->schedule_failed ? 'true' : 'false',
-            'ip' => '',
-            'type' => $this->scheduleLogType,
-            'data' => implode ('; ', is_null ($message) ? $this->schedule_output : $message),
+            'schedule_id' => $this->scheduleLogId,
+            'content' => implode ('; ', is_null ($message) ? $this->schedule_output : $message),
+            'status' => $this->schedule_failed ? ScheduleLog::STATUS_SUCCESS : ScheduleLog::STATUS_FAILED,
             'updated_at' => $now,
             'created_at' => $now
         ]);

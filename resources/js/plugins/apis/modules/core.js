@@ -12,4 +12,5 @@ export default {
     "moduleCoreDatabases": baseUrl + "Admin/goodcatch/m/core/databases", // 数据库信息
     "moduleCoreConnections": baseUrl + "Admin/goodcatch/m/core/connections", // 连接
     "moduleCoreTestConnection": baseUrl + "Admin/goodcatch/m/core/connections/test", // 测试连接
+    "moduleCoreSchedules": baseUrl + "Admin/goodcatch/m/core/schedules", // 计划与任务
 };
