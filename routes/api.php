@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/**
+ *
+ * @author allen <ali@goodcatch.cn>
+ * 商城后台 路由
+ *
+ */
 Route::prefix('Admin')->group(function(){
     Route::namespace('Admin')->prefix('goodcatch')->group(function(){
         Route::prefix(module_route_prefix())->group(function(){
@@ -25,7 +30,7 @@ Route::prefix('Admin')->group(function(){
                         'connections'=>'ConnectionController', // 连接
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
-                    Route::get('/connections/test', 'DatabaseController@test')->name('connections.test'); // 数据库
+                    Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
                 });
             });
         });
@@ -33,7 +38,7 @@ Route::prefix('Admin')->group(function(){
 
     /**
      *
-     * @author hg <364825702@qq.com>
+     * @author allen <ali@goodcatch.cn>
      * 商城商家后台 路由
      *
      */
@@ -45,7 +50,7 @@ Route::prefix('Admin')->group(function(){
 
     /**
      *
-     * @author hg <364825702@qq.com>
+     * @author allen <ali@goodcatch.cn>
      * 商城PC端 路由
      *
      */
@@ -58,7 +63,7 @@ Route::prefix('Admin')->group(function(){
 
     /**
      *
-     * @author hg <364825702@qq.com>
+     * @author allen <ali@goodcatch.cn>
      * 商城App端 路由
      *
      */

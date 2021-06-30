@@ -7,7 +7,6 @@ namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Goodcatch\Modules\Core\Http\Requests\Admin\DatasourceRequest;
-use Goodcatch\Modules\Core\Model\Admin\Datasource;
 use Goodcatch\Modules\Core\Repositories\Admin\DatasourceRepository;
 use Goodcatch\Modules\Core\Http\Resources\Admin\DatasourceResource\DatasourceCollection;
 use Illuminate\Database\QueryException;
@@ -22,7 +21,6 @@ class DatasourceController extends Controller
      * Display a listing of the resource.
      *
      * @param \Illuminate\Http\Request $request
-     * @param Datasource $model
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -31,7 +29,8 @@ class DatasourceController extends Controller
         return $this->success(
             new DatasourceCollection(DatasourceRepository::list(
                 $request->per_page??30,
-                $request->only($this->formNames)
+                $request->only($this->formNames),
+                $request->keyword
             )));
     }
 
@@ -44,7 +43,7 @@ class DatasourceController extends Controller
     public function store(DatasourceRequest $request)
     {
         try{
-            $this->success(DatasourceRepository::add($request->only($this->formNames)),__('base.success'));
+            return $this->success(DatasourceRepository::add($request->only($this->formNames)),__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }

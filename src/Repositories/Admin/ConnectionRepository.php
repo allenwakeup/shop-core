@@ -26,6 +26,9 @@ class ConnectionRepository extends BaseRepository
             ->paginate ($perPage);
         $data->transform (function ($item) {
             $item->typeText = Arr::get (Connection::TYPE, $item->type, '--');
+            $item->password = empty($item->password)
+                ? '****'
+                : (substr($item->password, 0, 1) . '****');
             return $item;
         });
 
@@ -34,19 +37,30 @@ class ConnectionRepository extends BaseRepository
 
     public static function add ($data)
     {
+        if(empty($data['password'])){
+            unset($data['password']);
+        }
         self::transform (self::TRANSFORM_TYPE_JSON, $data, 'options');
         return Connection::query ()->create ($data);
     }
 
     public static function update ($id, $data)
     {
+        if(empty($data['password'])){
+            unset($data['password']);
+        }
         self::transform (self::TRANSFORM_TYPE_JSON, $data, 'options');
         return Connection::find ($id)->update ($data);
     }
 
     public static function find ($id)
     {
-        return Connection::query ()->find ($id);
+        $data = Connection::query ()->find ($id);
+        if(!empty($data)){
+            $data = $data->toArray();
+            unset($data['password']);
+        }
+        return $data;
     }
 
     public static function delete ($id)

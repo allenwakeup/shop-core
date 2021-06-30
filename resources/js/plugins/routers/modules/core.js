@@ -18,6 +18,7 @@ export default [
 
             // 连接
             {path:"/Admin/goodcatch/m/core/connections",name:"goodcatch_m_core_admin_connections",component:()=>import("@/views/goodcatch/modules/core/admin/connections/index")},
+            {path:"/Admin/goodcatch/m/core/connections/form/:id?",name:"goodcatch_m_core_admin_connections_form",component:()=>import("@/views/goodcatch/modules/core/admin/connections/form")},
         ]
     }
 ];

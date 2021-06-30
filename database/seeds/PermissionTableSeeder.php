@@ -69,7 +69,7 @@ class PermissionTableSeeder extends Seeder
             // 连接管理
             $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '连接管理') => [
                 self::MODULE_ALIAS . '.connections' => array_merge($this->api_actions, [
-                    'text' => ['name' => '测试', 'content' => '测试连接']
+                    'test' => ['name' => '测试', 'content' => '测试连接']
                 ])
             ]
         ];

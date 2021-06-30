@@ -8,19 +8,17 @@ namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Goodcatch\Modules\Core\Events\ConnectionUpdated;
 use Goodcatch\Modules\Core\Http\Requests\Admin\ConnectionRequest;
-use Goodcatch\Modules\Core\Model\Admin\Connection;
 use Goodcatch\Modules\Core\Http\Resources\Admin\ConnectionResource\ConnectionCollection;
+use Goodcatch\Modules\Core\Model\Admin\Datasource;
 use Goodcatch\Modules\Core\Repositories\Admin\ConnectionRepository;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
-use Illuminate\View\View;
 
 class ConnectionController extends Controller
 {
     protected $formNames = [
-        'Connection_id', 'name', 'description',
+        'datasource_id', 'name', 'description',
         'conn_type', 'tns', 'driver', 'host',  'port',
         'database', 'username', 'password',  'url', 'service_name',
         'unix_socket', 'charset', 'collation',  'prefix', 'prefix_schema',
@@ -32,7 +30,6 @@ class ConnectionController extends Controller
      * Display a listing of the resource.
      *
      * @param \Illuminate\Http\Request $request
-     * @param Connection $model
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
@@ -54,7 +51,9 @@ class ConnectionController extends Controller
     public function store(ConnectionRequest $request)
     {
         try{
-            $this->success(ConnectionRepository::add($request->only($this->formNames)),__('base.success'));
+            $data = ConnectionRepository::add($request->only($this->formNames));
+            event (new ConnectionUpdated ());
+            return $this->success($data,__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -83,7 +82,9 @@ class ConnectionController extends Controller
         $data = $request->only($this->formNames);
 
         try{
-            return $this->success(ConnectionRepository::update($id, $data),__('base.success'));
+            $res = ConnectionRepository::update($id, $data);
+            event (new ConnectionUpdated ());
+            return $this->success($res,__('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
@@ -102,14 +103,16 @@ class ConnectionController extends Controller
         });
 
         try{
-            return $this->success(ConnectionRepository::delete($idArray),__('base.success'));
+            $data = ConnectionRepository::delete($idArray);
+            event (new ConnectionUpdated ());
+            return $this->success($data, __('base.success'));
         } catch (QueryException $e) {
             return $this->error([],__('base.error') . $e->getMessage());
         }
     }
 
     /**
-     * 连接管理-测试连接
+     * test connection configuration by connecting to this data source
      *
      * @param ConnectionRequest $request
      * @return array
@@ -117,37 +120,37 @@ class ConnectionController extends Controller
     public function test (ConnectionRequest $request)
     {
 
-        $config = $request->all ();
+        $config = $request->only($this->formNames);
 
-        $Connection = Connection::find ($request->Connection_id);
+        $datasource = Datasource::find ($request->datasource_id);
 
-        $connection_config = [];
+        $datasource_config = [];
 
-        if (isset ($Connection))
+        if (isset ($datasource))
         {
-            foreach (explode (',', $Connection->requires . ',' . $Connection->options) as $key)
+            foreach (explode (',', $datasource->requires . ',' . $datasource->options) as $key)
             {
                 $key = explode (':', trim($key), 2) [0];
 
                 if (! empty ($key))
                 {
-                    $connection_config [$key] = Arr::get ($config, $key, '');
+                    $datasource_config [$key] = Arr::get ($config, $key, '');
                 }
             }
         }
 
-        unset ($connection_config ['name']);
+        unset ($datasource_config ['name']);
 
-        $options = Arr::get ($connection_config, 'options');
+        $options = Arr::get ($datasource_config, 'options');
 
         if (empty ($options))
         {
-            unset ($connection_config ['options']);
+            unset ($datasource_config ['options']);
         }
-        
+
         try{
-            $connection = app ('db.factory')->make ($connection_config, 'test');
-            switch ($connection_config ['driver'])
+            $connection = app ('db.factory')->make ($datasource_config, 'test');
+            switch ($datasource_config ['driver'])
             {
                 case 'oracle':
                     $query = $connection->table('DUAL')->select ('*')->get ();
@@ -160,26 +163,12 @@ class ConnectionController extends Controller
 
             if (isset ($query) && count ($query) > 0)
             {
-                return $this->success([
-                    'code' => 0,
-                    'msg' => '连接成功'
-                ] ,__('base.success'));
+                return $this->success([] , __('core::admins.connection_test_successful'));
             }
-        }catch (\Exception $e)
-        {
-            return $this->success([
-                'code' => 2,
-                'msg' => '测试失败 ' . $e->getMessage (),
-                'redirect' => false
-            ] ,__('base.success'));
+        }catch (\Exception $e) {
+            return $this->error(__('core::admins.connection_test_failed') . $e->getMessage ());
         }
-        return $this->success([
-            'code' => 1,
-            'msg' => '测试失败',
-            'redirect' => false
-        ] ,__('base.success'));
-
-
+        return $this->error(__('core::admins.connection_test_failed'));
     }
 
 }

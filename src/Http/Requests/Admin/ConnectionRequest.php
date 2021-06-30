@@ -26,17 +26,12 @@ class ConnectionRequest extends FormRequest
                 new Database ($this->uniqueOrExists (Connection::class, 'name'))
             ],
             'description' => 'max:255',
-            'conn_type' => [
-                Rule::in ([
-                    Connection::TYPE_DST,
-                    Connection::TYPE_SRC
-                ]),
-            ],
+            'conn_type' => 'max:50',
             'tns' => 'max:255',
             'driver' => 'required|max:50',
             'host' => 'max:255',
             'port' => [function ($port) {return $port >= 1000 && $port <= 65535;}],
-            'database' => 'max:50',
+            'database' => 'required|max:50',
             'username' => 'max:50',
             'password' => 'max:50',
             'url' => 'max:255',
@@ -60,7 +55,13 @@ class ConnectionRequest extends FormRequest
             'server_version' => 'max:50',
             'options' => 'json',
             'sslmode' => 'max:20',
-            'group' => 'max:50',
+            'type' => [
+                Rule::in ([
+                    Connection::TYPE_DST,
+                    Connection::TYPE_SRC
+                ]),
+            ],
+            'group' => 'required|max:50',
             'order' => 'required|numeric',
             'status' => [
                 'required',

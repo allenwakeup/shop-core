@@ -10,11 +10,16 @@ use Goodcatch\Modules\Core\Model\Admin\Datasource;
 class DatasourceRepository extends BaseRepository
 {
 
-    public static function list($perPage, $condition = [])
+    public static function list($perPage, $condition = [], $keyword = null)
     {
         return Datasource::query()
-            ->where(function ($query) use ($condition) {
+            ->where(function ($query) use ($condition, $keyword) {
                 self::buildQuery($query, $condition);
+                if(!empty($keyword)){
+                    $query->orWhere('code', 'like', "%$keyword%")
+                        ->orWhere('name', 'like', "%$keyword%")
+                        ->orWhere('description', 'like', "%$keyword%");
+                }
             })
             ->orderBy('id', 'desc')
             ->paginate($perPage);
