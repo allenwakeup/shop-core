@@ -28,7 +28,7 @@ Route::prefix('Admin')->group(function(){
                         'areas'=>'AreaController', // 区域
                         'datasources'=>'DatasourceController', // 区域
                         'connections'=>'ConnectionController', // 连接
-                        'schedules'=>'ConnectionController', // 计划与任务
+                        'schedules'=>'ScheduleController', // 计划与任务
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
                     Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
