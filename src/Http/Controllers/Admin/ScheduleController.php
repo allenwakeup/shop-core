@@ -39,6 +39,17 @@ class ScheduleController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        return $this->success(ScheduleRepository::find($id));
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param ScheduleRequest $request

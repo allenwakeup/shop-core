@@ -29,9 +29,15 @@ Route::prefix('Admin')->group(function(){
                         'datasources'=>'DatasourceController', // 区域
                         'connections'=>'ConnectionController', // 连接
                         'schedules'=>'ScheduleController', // 计划与任务
+                        'data_maps'=>'DataMapController', // 数据映射
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
                     Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
+
+                    Route::post('/dataMaps/{id}/assignment/{left_id}/save', 'DataMapController@saveAssignment')->name('data_maps.assignment.store'); // 数据映射
+                    Route::delete('/dataMaps/{id}/assignment/{left_id}/delete', 'DataMapController@deleteAssignment')->name('data_maps.assignment.destroy'); // 数据映射
+                    Route::get('/dataMaps/{id}/assignment/select/{left_id}', 'DataMapController@selectAssignment')->name('data_maps.assignment.show'); // 数据映射
+                    Route::get('/dataMaps/{id}/assignment', 'DataMapController@assignment')->name('data_maps.assignment.index'); // 数据映射
                 });
             });
         });

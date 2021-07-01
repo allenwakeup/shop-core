@@ -40,6 +40,10 @@ class PermissionTableSeeder extends Seeder
                             [
                                 'name' => '连接管理',
                                 'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'connections'),
+                            ],
+                            [
+                                'name' => '数据映射',
+                                'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'schedules'),
                             ]
                         ]
                     ],
@@ -79,6 +83,15 @@ class PermissionTableSeeder extends Seeder
             $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '连接管理') => [
                 self::MODULE_ALIAS . '.connections' => array_merge($this->api_actions, [
                     'test' => ['name' => '测试', 'content' => '测试连接']
+                ])
+            ],
+            // 数据映射
+            $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据映射') => [
+                self::MODULE_ALIAS . '.connections' => array_merge($this->api_actions, [
+                    'assignment.index' => ['name' => '列表', 'content' => '列表展示'],
+                    'assignment.store' => ['name' => '添加', 'content' => '数据添加'],
+                    'assignment.show' => ['name' => '详情', 'content' => '单个详情'],
+                    'assignment.destroy' => ['name' => '删除', 'content' => '数据删除']
                 ])
             ],
             // 服务管理
