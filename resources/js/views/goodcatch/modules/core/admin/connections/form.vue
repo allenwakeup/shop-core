@@ -55,7 +55,12 @@
                     <a-input v-model="form.username"></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="密码" prop="password" v-show="showFormItem['password']">
-                    <a-input v-model="form.password" type="password"></a-input>
+                    <a-input-password v-model="form.password" placeholder="输入密码=">
+                        <a-icon slot="prefix" type="password" />
+                        <a-tooltip slot="suffix" title="留空表示不修改密码">
+                            <a-icon type="info-circle" />
+                        </a-tooltip>
+                    </a-input-password>
                 </a-form-model-item>
                 <a-form-model-item label="URL" prop="url" v-show="showFormItem['url']">
                     <a-input v-model="form.url"></a-input>
