@@ -85,12 +85,15 @@ class PermissionTableSeeder extends Seeder
                     'test' => ['name' => '测试', 'content' => '测试连接']
                 ])
             ],
+            // 数据路径
+            $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据路径') => [
+                self::MODULE_ALIAS . '.data_routes'
+            ],
             // 数据映射
             $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据映射') => [
-                self::MODULE_ALIAS . '.connections' => array_merge($this->api_actions, [
-                    'assignment.index' => ['name' => '列表', 'content' => '列表展示'],
+                self::MODULE_ALIAS . '.data_maps' => array_merge($this->api_actions, [
                     'assignment.store' => ['name' => '添加', 'content' => '数据添加'],
-                    'assignment.show' => ['name' => '详情', 'content' => '单个详情'],
+                    'assignment.show' => ['name' => '详情', 'content' => '数据映射目标详情'],
                     'assignment.destroy' => ['name' => '删除', 'content' => '数据删除']
                 ])
             ],

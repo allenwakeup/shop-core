@@ -1,17 +1,17 @@
 <template>
     <div>
-        <div class="admin_table_page_title">数据映射列表</div>
+        <div class="admin_table_page_title">数据路径列表</div>
         <div class="unline underm"></div>
 
         <div class="admin_table_handle_btn">
-            <a-button @click="$router.push('/Admin/goodcatch/m/core/data_maps/form')" type="primary" icon="plus">添加</a-button>
+            <a-button @click="$router.push('/Admin/goodcatch/m/core/data_routes/form')" type="primary" icon="plus">添加</a-button>
             <a-button class="admin_delete_btn" type="danger" icon="delete" @click="del">批量删除</a-button>
         </div>
         <div class="admin_table_list">
             <a-table :columns="columns" :data-source="list" :scroll="{ x: 2048, y: 400 }" :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" row-key="id">
 
                 <span slot="action" slot-scope="rows">
-                    <a-button icon="edit" @click="$router.push('/Admin/goodcatch/m/core/data_maps/form/'+rows.id)">编辑</a-button>
+                    <a-button icon="edit" @click="$router.push('/Admin/goodcatch/m/core/data_routes/form/'+rows.id)">编辑</a-button>
                 </span>
             </a-table>
             <div class="admin_pagination" v-if="total>0">
@@ -70,7 +70,7 @@ export default {
                 cancelText: '取消',
                 onOk:()=> {
                     let ids = this.selectedRowKeys.join(',');
-                    this.$delete(this.$api.moduleCoreDataMaps+'/'+ids).then(res=>{
+                    this.$delete(this.$api.moduleCoreDataRoutes+'/'+ids).then(res=>{
                         if(res.code == 200){
                             this.onload();
                             this.$message.success('删除成功');
@@ -84,7 +84,7 @@ export default {
         },
 
         onload(){
-            this.$get(this.$api.moduleCoreDataMaps,this.params).then(res=>{
+            this.$get(this.$api.moduleCoreDataRoutes,this.params).then(res=>{
                 this.total = res.data.total;
                 this.list = res.data.data;
             });

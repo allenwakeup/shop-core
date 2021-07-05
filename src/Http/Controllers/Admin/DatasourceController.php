@@ -11,6 +11,7 @@ use Goodcatch\Modules\Core\Repositories\Admin\DatasourceRepository;
 use Goodcatch\Modules\Core\Http\Resources\Admin\DatasourceResource\DatasourceCollection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class DatasourceController extends Controller
 {
@@ -45,7 +46,7 @@ class DatasourceController extends Controller
         try{
             return $this->success(DatasourceRepository::add($request->only($this->formNames)),__('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -74,7 +75,7 @@ class DatasourceController extends Controller
         try{
             return $this->success(DatasourceRepository::update($id, $data),__('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -93,7 +94,7 @@ class DatasourceController extends Controller
         try{
             return $this->success(DatasourceRepository::delete($idArray),__('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . $e->getMessage());
         }
     }
 

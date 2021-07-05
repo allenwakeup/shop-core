@@ -126,24 +126,11 @@ class DataRouteRepository extends BaseRepository
                     return $arr;
                 }, \collect ([]));
 
-            return [
-                'code' => 0,
-                'msg' => '',
-                'count' => $data_from->count (),
-                'data' => $data_from->slice ($page * $perPage, $perPage)->values ()->all (),
-            ];
+            return $data_from->slice ($page * $perPage, $perPage)->values ()->all ();
 
         }
 
-
-
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => 0,
-            'data' => [],
-        ];
+        return [];
     }
 
     public static function to (DataRoute $data_route, $left_id)
@@ -275,24 +262,11 @@ class DataRouteRepository extends BaseRepository
             // 转换成树形数据
             $data_to = collection2TreeData ($data_to, $groups, 'title', 'children', 'id', 'name');
 
-            return [
-                'code' => 0,
-                'msg' => '',
-                'count' => $data_to->count (),
-                'data' => $data_to->values ()->all (),
-            ];
+            return $data_to->values ()->all ();
 
         }
 
-
-
-
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => 0,
-            'data' => [],
-        ];
+        return [];
     }
 
     public static function add ($data)

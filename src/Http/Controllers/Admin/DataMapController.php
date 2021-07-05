@@ -8,6 +8,7 @@ namespace Goodcatch\Modules\Core\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Goodcatch\Modules\Core\Events\DataMapUpdated;
 use Goodcatch\Modules\Core\Http\Requests\Admin\DataMapRequest;
+use Goodcatch\Modules\Core\Http\Resources\Admin\DataMapResource\DataMapCollection;
 use Goodcatch\Modules\Core\Jobs\SyncDataMappingData;
 use Goodcatch\Modules\Core\Model\Admin\Eloquent;
 use Goodcatch\Modules\Core\Repositories\Admin\DataMapRepository;
@@ -15,7 +16,6 @@ use Goodcatch\Modules\Core\Model\Admin\DataMap;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\View\View;
 
 class DataMapController extends Controller
 {
@@ -26,226 +26,127 @@ class DataMapController extends Controller
         'parent_key', 'related_key', 'relation', 'status'
     ];
 
-    public function __construct ()
-    {
-        parent::__construct ();
-
-        $this->breadcrumb [] = ['title' => '数据映射列表', 'url' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.index')];
-    }
-
     /**
-     * 数据源管理-数据映射
+     * Display a listing of the resource.
      *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
-    public function index ()
+    public function index(Request $request)
     {
-        $this->breadcrumb [] = ['title' => '数据映射列表', 'url' => ''];
-        return view ('core::admin.dataMap.index', ['breadcrumb' => $this->breadcrumb]);
+
+        return $this->success(
+            new DataMapCollection(DataMapRepository::list(
+                $request->per_page??30,
+                $request->only($this->formNames),
+                $request->keyword
+            )));
     }
 
     /**
-     * 数据映射管理-数据映射列表数据接口
-     *
-     * @param Request $request
-     * @return array
-     */
-    public function list (Request $request)
-    {
-        $perPage = (int) $request->get ('limit', 50);
-        $condition = $request->only ($this->formNames);
-
-        $data = DataMapRepository::list ($perPage, $condition, $request->keyword);
-
-        return $data;
-    }
-
-    /**
-     * 数据映射管理-新增数据映射
-     *
-     */
-    public function create ()
-    {
-        $this->breadcrumb [] = ['title' => '新增数据映射', 'url' => ''];
-        return view ('core::admin.dataMap.add', ['breadcrumb' => $this->breadcrumb]);
-    }
-
-    /**
-     * 数据映射管理-数据映射详情
-     *
-     */
-    public function detail ($id)
-    {
-        return view ('admin.detail', ['model' => DataMap::find ($id)]);
-    }
-
-    /**
-     * 数据映射管理-保存数据映射
+     * Store a newly created resource in storage.
      *
      * @param DataMapRequest $request
-     * @return array
+     * @return \Illuminate\Http\Response
      */
-    public function save (DataMapRequest $request)
+    public function store(DataMapRequest $request)
     {
-        try {
-            DataMapRepository::add ($request->only ($this->formNames));
+        try{
+            $added = DataMapRepository::add($request->only($this->formNames));
             event (new DataMapUpdated ());
-            return [
-                'code' => 0,
-                'msg' => '新增成功',
-                'redirect' => true
-            ];
+            return $this->success($added,__('base.success'));
         } catch (QueryException $e) {
-            return [
-                'code' => 1,
-                'msg' => '新增失败：' . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据映射已存在' : '其它错误'),
-                'redirect' => false
-            ];
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据映射已存在' : '其它错误'));
         }
     }
 
     /**
-     * 数据映射管理-编辑数据映射
+     * Display the specified resource.
      *
      * @param int $id
-     * @return View
+     * @return \Illuminate\Http\Response
      */
-    public function edit ($id)
+    public function show($id)
     {
-        $this->breadcrumb [] = ['title' => '编辑数据映射', 'url' => ''];
-
-        $model = DataMapRepository::find ($id);
-        return view ('core::admin.dataMap.add', ['id' => $id, 'model' => $model, 'breadcrumb' => $this->breadcrumb]);
+        return $this->success(DataMapRepository::find($id));
     }
 
     /**
-     * 数据映射管理-更新数据映射
+     * Update the specified resource in storage.
      *
      * @param DataMapRequest $request
      * @param int $id
-     * @return array
+     * @return \Illuminate\Http\Response
      */
-    public function update (DataMapRequest $request, $id)
+    public function update(DataMapRequest $request, $id)
     {
-        $data = $request->only ($this->formNames);
-        try {
-            DataMapRepository::update ($id, $data);
+        $data = $request->only($this->formNames);
+
+        try{
+            $updated = DataMapRepository::update($id, $data);
             event (new DataMapUpdated ());
-            return [
-                'code' => 0,
-                'msg' => '编辑成功',
-                'redirect' => true
-            ];
+            return $this->success($updated,__('base.success'));
         } catch (QueryException $e) {
-            return [
-                'code' => 1,
-                'msg' => '编辑失败：' . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据映射已存在' : '其它错误'),
-                'redirect' => false
-            ];
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据映射已存在' : '其它错误'));
         }
     }
 
     /**
-     * 数据映射管理-删除数据映射
+     * Remove the specified resource from storage.
      *
      * @param int $id
-     * @return array
+     * @return \Illuminate\Http\Response
      */
-    public function delete ($id)
+    public function destroy($id)
     {
-        try {
-            DataMapRepository::delete ($id);
+        $idArray = array_filter(explode(',',$id),function($item){
+            return is_numeric($item);
+        });
+
+        try{
+            $deleted = DataMapRepository::delete($idArray);
             event (new DataMapUpdated ());
-            return [
-                'code' => 0,
-                'msg' => '删除成功',
-                'redirect' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.index')
-            ];
-        } catch (\RuntimeException $e) {
-            return [
-                'code' => 1,
-                'msg' => '删除失败：' . $e->getMessage (),
-                'redirect' => false
-            ];
+            return $this->success($deleted,__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error(__('base.error') . $e->getMessage());
         }
     }
 
-
     /**
-     * 数据映射管理-映射数据
+     * data mapping left model
      *
-     * @param int $id
-     * @return array
-     */
-    public function assignment ($id)
-    {
-        $is_pop = (request ()->get ('pop') . '') === '1';
-
-        $this->breadcrumb[] = ['title' => '映射数据', 'url' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.index')];
-
-        $dataMap = DataMap::find ($id);
-
-        $view_model = [
-            'is_pop' => $is_pop,
-            'breadcrumb' => $this->breadcrumb,
-            'action' => [
-                'POST' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment.save', ['id' => $id, 'left_id' => 'left_id']),
-                'DELETE' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment.delete', ['id' => $id, 'left_id' => 'left_id']),
-            ],
-        ];
-
-        if (isset ($dataMap))
-        {
-            $this->breadcrumb[] = ['title' => $dataMap->left . '-' . $dataMap->right . '映射', 'url' => ''];
-            $view_model ['breadcrumb'] = $this->breadcrumb;
-            $view_model ['id'] = $id;
-            $view_model ['mapping'] = $dataMap->left_table . '-' . $dataMap->right_table;
-            $view_model ['model'] = $dataMap;
-            $view_model ['select'] = route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment.select', ['id' => $id, 'left_id' => $dataMap->left_table]);
-
-        }
-        return view ('core::admin.dataMap.assignment', $view_model);
-
-    }
-
-    /**
-     * 数据映射管理-左表列表数据接口
-     *
+     * @param $id datamap ID
+     * @param $left_id mapping id
      * @param Request $request
      * @return array
      */
-    public function selectAssignment ($id, $left_id, Request $request)
-    {
-
-        $perPage = (int) $request->get ('limit', 50);
+    public function selectAssignment ($id, $left_id, Request $request) {
 
         $dataMap = DataMap::find ($id);
 
-        $data = [
-            'code' => 0,
-            'msg' => '',
-            'count' => 0,
-            'data' => [],
-        ];
+        return $this->success(
+            new DataMapCollection(
+                isset ($dataMap) ? DataMapRepository::select (
+                    $request->per_page??30,
+                    $dataMap,
+                    $left_id,
+                    $request->keyword)
+                    : []));
 
-        if (isset ($dataMap))
-        {
-            $data = DataMapRepository::select ($perPage, $dataMap, $left_id, $request->keyword);
-        }
-
-        return $data;
 
 
     }
 
     /**
-     * 数据映射管理-保存映射的数据
+     * map left model to right model
      *
-     * @param $id
-     * @return array
+     * @param \Illuminate\Http\Request $request
+     * @param $id datamap ID
+     * @param $left_id mapping id
+     * @return array results
      */
-    public function saveAssignment ($id, $left_id)
-    {
-        $ids = request ()->input ('id.*');
+    public function saveAssignment (Request $request, $id, $left_id) {
+        $ids = $request->input ('id.*');
         if (isset ($ids) && count ($ids) > 0)
         {
             $dataMap = DataMap::find ($id);
@@ -253,7 +154,8 @@ class DataMapController extends Controller
             if (isset ($dataMap) && $dataMap->status === DataMap::STATUS_ENABLE)
             {
                 try {
-                    (new Eloquent)->setDataMapTable ($dataMap->left_table)
+
+                    $attached = (new Eloquent)->setDataMapTable ($dataMap->left_table)
                         ->firstWhere ($dataMap->parent_key, $left_id)
                         ->setDataMapTable ($dataMap->left_table)
                         ->getDataMapping ($dataMap->right_table)
@@ -275,40 +177,35 @@ class DataMapController extends Controller
                             : ''
                     ])));
 
-                    return [
-                        'code' => 0,
-                        'msg' => '保存成功',
-                        'redirect' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment', ['id' => $id])
-                    ];
+                    $this->success($attached);
+
                 } catch (\RuntimeException $e) {
-                    return [
-                        'code' => 1,
-                        'msg' => '保存失败：' . $e->getMessage (),
-                        'redirect' => false
-                    ];
+                    return $this->error(__('base.error') . $e->getMessage());
                 }
             }
         }
 
+        return $this->error(__('base.error'));
 
     }
 
     /**
-     * 数据映射管理-删除映射的数据
+     * detach model mapping
      *
-     * @param $id
-     * @return array
+     * @param \Illuminate\Http\Request $request
+     * @param $id datamap ID
+     * @param $left_id mapping id
+     * @return array result
      */
-    public function deleteAssignment ($id, $left_id)
-    {
-        $ids = request ()->input ('id.*');
+    public function deleteAssignment (Request $request, $id, $left_id) {
+        $ids = $request->input ('id.*');
         if (isset ($ids) && count ($ids) > 0)
         {
             $dataMap = DataMap::find ($id);
             if (isset ($dataMap) && $dataMap->status === DataMap::STATUS_ENABLE)
             {
                 try {
-                    (new Eloquent)->setDataMapTable ($dataMap->left_table)
+                    $detached = (new Eloquent)->setDataMapTable ($dataMap->left_table)
                         ->firstWhere ($dataMap->parent_key, $left_id)
                         ->setDataMapTable ($dataMap->left_table)
                         ->getDataMapping ($dataMap->right_table)
@@ -326,20 +223,14 @@ class DataMapController extends Controller
                             : ''
                     ])));
 
-                    return [
-                        'code' => 0,
-                        'msg' => '删除成功',
-                        'redirect' => route('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment', ['id' => $id])
-                    ];
+                    return $this->success($detached);
                 } catch (\RuntimeException $e) {
-                    return [
-                        'code' => 1,
-                        'msg' => '删除失败：' . $e->getMessage(),
-                        'redirect' => false
-                    ];
+                    return $this->error(__('base.error') . $e->getMessage());
                 }
             }
         }
+
+        return $this->error(__('base.error'));
     }
 
 }

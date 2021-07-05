@@ -15,6 +15,10 @@ export default [
             // 数据库信息
             {path:"/Admin/goodcatch/m/core/databases",name:"goodcatch_m_core_admin_databases",component:()=>import("@/views/goodcatch/modules/core/admin/databases/index")},
 
+            // 数据路径
+            {path:"/Admin/goodcatch/m/core/data_routes",name:"goodcatch_m_core_admin_data_routes",component:()=>import("@/views/goodcatch/modules/core/admin/data_routes/index")},
+            {path:"/Admin/goodcatch/m/core/data_routes/form/:id?",name:"goodcatch_m_core_admin_data_routes_form",component:()=>import("@/views/goodcatch/modules/core/admin/data_routes/form")},
+
             // 数据映射
             {path:"/Admin/goodcatch/m/core/data_maps",name:"goodcatch_m_core_admin_data_maps",component:()=>import("@/views/goodcatch/modules/core/admin/data_maps/index")},
             {path:"/Admin/goodcatch/m/core/data_maps/form/:id?",name:"goodcatch_m_core_admin_data_maps_form",component:()=>import("@/views/goodcatch/modules/core/admin/data_maps/form")},

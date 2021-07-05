@@ -14,6 +14,7 @@ use Goodcatch\Modules\Core\Repositories\Admin\ConnectionRepository;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class ConnectionController extends Controller
 {
@@ -55,7 +56,7 @@ class ConnectionController extends Controller
             event (new ConnectionUpdated ());
             return $this->success($data,__('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -86,7 +87,7 @@ class ConnectionController extends Controller
             event (new ConnectionUpdated ());
             return $this->success($res,__('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -107,7 +108,7 @@ class ConnectionController extends Controller
             event (new ConnectionUpdated ());
             return $this->success($data, __('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . $e->getMessage());
         }
     }
 

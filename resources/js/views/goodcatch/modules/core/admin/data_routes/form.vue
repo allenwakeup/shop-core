@@ -2,7 +2,7 @@
     <div>
         <div class="admin_table_page_title">
             <a-button @click="$router.back()" class="float_right" icon="arrow-left">返回</a-button>
-            数据映射编辑
+            数据路径编辑
         </div>
         <div class="unline underm"></div>
         <div class="admin_form">
@@ -60,7 +60,7 @@
 
                 this.$refs.form.validate(valid => {
                     if (valid) {
-                        let api = this.$apiHandle(this.$api.moduleCoreDataMaps,this.id);
+                        let api = this.$apiHandle(this.$api.moduleCoreDataRoutes,this.id);
                         if(api.status){
                             this.$put(api.url,this.form).then(res=>{
                                 if(res.code == 200){
@@ -94,7 +94,7 @@
                 this.form.status = checked ? 1 : 0;
             },
             get_form(){
-                this.$get(this.$api.moduleCoreDataMaps+'/'+this.id).then(res=>{
+                this.$get(this.$api.moduleCoreDataRoutes+'/'+this.id).then(res=>{
                     this.form = res.data;
                 });
             },

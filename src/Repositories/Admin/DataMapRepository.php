@@ -20,45 +20,47 @@ class DataMapRepository extends BaseRepository
 
     public static $REFLECT_METHOD_ARGS = [];
 
+    const ELOQUENT_RELATIONSHIPS = [
+        'morphToMany' => '多对多（多态）',
+        'morphTo' => '一对多（多态）',
+        'morphOne' => '一对一 (多态)',
+        'morphMany' => '一对多（多态）',
+        'hasOneThrough' => '远程一对一',
+        'hasOne' => '一对一',
+        'hasManyThrough' => '远程一对多',
+        'hasMany' => '一对多',
+        'belongsToMany' => '多对多',
+        'belongsTo' => '一对多 (反向)'
+    ];
+
     public static function list ($perPage, $condition = [], $keyword = null)
     {
-
-        $relationships = \collect (light_dictionary('CORE_DICT_MODEL_RELATIONS'))->reduce(
-            function ($arr, $item) {
-                $arr [$item ['id']] = $item ['name'];
-                return $arr;
-            }, []
-        );
-
         $data = DataMap::query ()
             ->with ('data_route')
             ->where (function ($query) use ($condition, $keyword) {
                 self::buildQuery ($query, $condition);
                 if (! empty ($keyword))
                 {
-                    self::buildSelect ($query, $condition, $keyword);
+                    $query->orWhere('name', 'like', "%$keyword%")
+                        ->orWhere('table', 'like', "%$keyword%")
+                        ->orWhere('description', 'like', "%$keyword%")
+                        ->orWhere('left', 'like', "%$keyword%")
+                        ->orWhere('left_table', 'like', "%$keyword%")
+                        ->orWhere('right', 'like', "%$keyword%")
+                        ->orWhere('right_table', 'like', "%$keyword%");
                 }
             })
             ->orderBy ('id', 'desc')
             ->paginate ($perPage);
-        $data->transform (function ($item) use ($relationships) {
-            $item->editUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataMap.edit', ['id' => $item->id]);
-            $item->deleteUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataMap.delete', ['id' => $item->id]);
-            $item->detailUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataMap.detail', ['id' => $item->id]);
-            $item->assignmentUrl = route('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment', ['id' => $item->id]) . '?pop=1';
-            if (Arr::has ($relationships, $item->relationship))
+        $data->transform (function ($item) {
+            if (Arr::has (self::ELOQUENT_RELATIONSHIPS, $item->relationship))
             {
-                $item->relationshipText = Arr::get ($relationships, $item->relationship, '--');
+                $item->relationshipText = Arr::get (self::ELOQUENT_RELATIONSHIPS, $item->relationship, '--');
             }
             return $item;
         });
 
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+        return $data;
     }
 
     public static function select ($perPage, DataMap $dataMap, $left_id, $keyword = null)

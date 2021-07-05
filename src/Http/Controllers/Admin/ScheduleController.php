@@ -12,6 +12,7 @@ use Goodcatch\Modules\Core\Model\Admin\Schedule;
 use Goodcatch\Modules\Core\Repositories\Admin\ScheduleRepository;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ScheduleController extends Controller
 {
@@ -60,7 +61,7 @@ class ScheduleController extends Controller
         try{
             return $this->success(ScheduleRepository::add($request->only($this->formNames)), __('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -89,7 +90,7 @@ class ScheduleController extends Controller
 
             return $this->success($res, __('base.success'));
         } catch (QueryException $e) {
-            return $this->error(__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 

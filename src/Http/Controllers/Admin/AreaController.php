@@ -12,6 +12,7 @@ use Goodcatch\Modules\Core\Repositories\Admin\AreaRepository;
 use Goodcatch\Modules\Core\Http\Resources\Admin\AreaResource\AreaCollection;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class AreaController extends Controller
 {
@@ -51,7 +52,7 @@ class AreaController extends Controller
         try{
             return $this->success(AreaRepository::add($request->only($this->formNames)), __('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -80,7 +81,7 @@ class AreaController extends Controller
         try{
             return $this->success(AreaRepository::update($id, $data), __('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . (Str::contains ($e->getMessage (), 'Duplicate entry') ? '当前数据已存在' : '其它错误'));
         }
     }
 
@@ -99,7 +100,7 @@ class AreaController extends Controller
         try{
             return $this->success(AreaRepository::delete($idArray), __('base.success'));
         } catch (QueryException $e) {
-            return $this->error([],__('base.error') . $e->getMessage());
+            return $this->error(__('base.error') . $e->getMessage());
         }
     }
 }
