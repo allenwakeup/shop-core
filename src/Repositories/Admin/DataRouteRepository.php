@@ -28,18 +28,11 @@ class DataRouteRepository extends BaseRepository
             ->orderBy ('id', 'desc')
             ->paginate ($perPage);
         $data->transform (function ($item) {
-            $item->editUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataRoute.edit', ['id' => $item->id]);
-            $item->deleteUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataRoute.delete', ['id' => $item->id]);
-            $item->detailUrl = route ('admin::' . module_route_prefix ('.') . 'core.dataRoute.detail', ['id' => $item->id]);
+
             return $item;
         });
 
-        return [
-            'code' => 0,
-            'msg' => '',
-            'count' => $data->total (),
-            'data' => $data->items (),
-        ];
+        return $data;
     }
 
     public static function from (DataRoute $data_route, $perPage, $page, $keyword)

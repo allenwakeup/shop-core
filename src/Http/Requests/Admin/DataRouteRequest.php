@@ -3,6 +3,7 @@
 namespace Goodcatch\Modules\Core\Http\Requests\Admin;
 
 use Goodcatch\Modules\Core\Http\Requests\BaseRequest as FormRequest;
+use Goodcatch\Modules\Core\Model\Admin\DataRoute;
 
 class DataRouteRequest extends FormRequest
 {
@@ -15,7 +16,7 @@ class DataRouteRequest extends FormRequest
     public function rules ()
     {
         return [
-            'name' => 'required|max:50',
+            'name' => ['required', 'max:50', $this->uniqueOrExists (DataRoute::class, 'name') . ':core_dataroutes'],
             'alias' => 'max:50',
             'short' => 'max:20',
             'description' => 'max:255',

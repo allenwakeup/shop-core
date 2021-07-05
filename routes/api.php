@@ -29,7 +29,7 @@ Route::prefix('Admin')->group(function(){
                         'datasources'=>'DatasourceController', // 区域
                         'connections'=>'ConnectionController', // 连接
                         'schedules'=>'ScheduleController', // 计划与任务
-                        'data_routes'=>'DataMapController', // 数据路径
+                        'data_routes'=>'DataRouteController', // 数据路径
                         'data_maps'=>'DataMapController', // 数据映射
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库

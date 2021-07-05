@@ -75,7 +75,7 @@ class DataRouteController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param DataMapRequest $request
+     * @param DataRouteRequest $request
      * @return \Illuminate\Http\Response
      */
     public function store(DataRouteRequest $request)
@@ -90,7 +90,7 @@ class DataRouteController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param DataMapRequest $request
+     * @param DataRouteRequest $request
      * @param int $id
      * @return \Illuminate\Http\Response
      */

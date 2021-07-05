@@ -9,7 +9,9 @@
         </div>
         <div class="admin_table_list">
             <a-table :columns="columns" :data-source="list" :scroll="{ x: 2048, y: 400 }" :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" row-key="id">
-
+                <span slot="connection_id" slot-scope="record">
+                    {{ record.connection ? (record.connection.datasource ? (record.connection.name + '(' + record.connection.datasource.name + ')') : record.connection.name) : '--' }}
+                </span>
                 <span slot="action" slot-scope="rows">
                     <a-button icon="edit" @click="$router.push('/Admin/goodcatch/m/core/data_routes/form/'+rows.id)">编辑</a-button>
                 </span>
@@ -35,10 +37,16 @@ export default {
           selectedRowKeys:[], // 被选择的行
           columns:[
               {title:'#',dataIndex:'id',fixed:'left', width: 80},
-              {title:'名称',dataIndex:'name', width: 180},
-              {title:'描述',dataIndex:'description', width: 150},
-              {title:'排序',dataIndex:'order', width: 100},
-              {title:'状态',dataIndex:'status', width: 90},
+              {title:'名称',dataIndex:'name', width: 200},
+              {title:'简称',dataIndex:'short', width: 180},
+              {title:'别名',dataIndex:'alias', width: 180},
+              {title:'首表名称',dataIndex:'from', width: 120},
+              {title:'首表表名',dataIndex:'table_from', width: 120},
+              {title:'尾表名称',dataIndex:'to', width: 120},
+              {title:'尾表表名',dataIndex:'table_to', width: 120},
+              {title:'目标表',dataIndex:'output', width: 150},
+              {title:'连接', scopedSlots:{ customRender: 'connection_id' }, width: 220},
+              {title:'描述',dataIndex:'description', width: 280},
               {title:'创建时间',dataIndex:'created_at', width: 200},
               {title:'更新时间',dataIndex:'updated_at', width: 200},
               {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},

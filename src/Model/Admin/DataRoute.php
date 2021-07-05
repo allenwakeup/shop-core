@@ -107,7 +107,7 @@ class DataRoute extends Model
 
     public function getOutputAttribute ($value)
     {
-        return light_config ('DATA_EXCHANGE_DATA_ROUTE_PREFIX', 'sync_') . $value;
+        return 'sync_' . $value;
     }
 
     public function getOutputOriginAttribute ()

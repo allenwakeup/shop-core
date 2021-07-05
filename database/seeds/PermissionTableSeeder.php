@@ -42,8 +42,12 @@ class PermissionTableSeeder extends Seeder
                                 'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'connections'),
                             ],
                             [
+                                'name' => '数据路径',
+                                'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'data_routes'),
+                            ],
+                            [
                                 'name' => '数据映射',
-                                'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'schedules'),
+                                'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS,'data_maps'),
                             ]
                         ]
                     ],
