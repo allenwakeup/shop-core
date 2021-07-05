@@ -2,7 +2,6 @@
     <div>
         <div class="admin_table_page_title">数据映射列表</div>
         <div class="unline underm"></div>
-
         <div class="admin_table_handle_btn">
             <a-button @click="$router.push('/Admin/goodcatch/m/core/data_maps/form')" type="primary" icon="plus">添加</a-button>
             <a-button class="admin_delete_btn" type="danger" icon="delete" @click="del">批量删除</a-button>
@@ -10,6 +9,15 @@
         <div class="admin_table_list">
             <a-table :columns="columns" :data-source="list" :scroll="{ x: 2048, y: 400 }" :pagination="false" :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" row-key="id">
 
+                <span slot="data_route_id" slot-scope="record">
+                    {{ record.dataRoute ? record.dataRoute.name : record.data_route_id }}
+                </span>
+                <span slot="left" slot-scope="record">
+                    {{ record.left + record.left_table }}
+                </span>
+                <span slot="right" slot-scope="record">
+                    {{ record.right + record.right_table }}
+                </span>
                 <span slot="action" slot-scope="rows">
                     <a-button icon="edit" @click="$router.push('/Admin/goodcatch/m/core/data_maps/form/'+rows.id)">编辑</a-button>
                 </span>
@@ -34,14 +42,24 @@ export default {
           total:0, //总页数
           selectedRowKeys:[], // 被选择的行
           columns:[
-              {title:'#',dataIndex:'id',fixed:'left', width: 80},
-              {title:'名称',dataIndex:'name', width: 180},
-              {title:'描述',dataIndex:'description', width: 150},
-              {title:'排序',dataIndex:'order', width: 100},
-              {title:'状态',dataIndex:'status', width: 90},
-              {title:'创建时间',dataIndex:'created_at', width: 200},
-              {title:'更新时间',dataIndex:'updated_at', width: 200},
-              {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
+            {title:'#',dataIndex:'id',fixed:'left', width: 80},
+            {title:'数据路径', scopedSlots:{ customRender: 'data_route_id' }, width: 220},
+            {title:'左表', scopedSlots:{ customRender: 'left' }, width: 220},
+            {title:'左表模板',dataIndex:'left_tpl', width: 180},
+            {title:'右表', scopedSlots:{ customRender: 'right' }, width: 220},
+            {title:'右表模板',dataIndex:'right_tpl', width: 180},
+            {title:'关联关系',dataIndex:'relationshipText', width: 180},
+            {title:'Foreign Pivot Key',dataIndex:'foreign_pivot_key', width: 200},
+            {title:'Related Pivot Key',dataIndex:'related_pivot_key', width: 200},
+            {title:'Parent Key',dataIndex:'parent_key', width: 200},
+            {title:'Related Key',dataIndex:'related_key', width: 200},
+            {title:'多态前缀',dataIndex:'name', width: 180},
+            {title:'描述',dataIndex:'description', width: 150},
+            {title:'存储位置',dataIndex:'table', width: 180},
+            {title:'状态',dataIndex:'status', width: 90},
+            {title:'创建时间',dataIndex:'created_at', width: 200},
+            {title:'更新时间',dataIndex:'updated_at', width: 200},
+            {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
           ],
           list:[],
       };

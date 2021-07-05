@@ -66,7 +66,7 @@ class DataRouteController extends Controller
         $data = [];
         if(isset ($data_route)){
             $data = $data_route->toArray();
-            $data ['left_data_map'] = $data_route->data_maps ()->where ('left_table', $data_route->table_from)->get ()->first ();
+            $data ['left_data_map'] = $data_route->dataMaps ()->where ('left_table', $data_route->table_from)->get ()->first ();
         }
 
         return $this->success($data);

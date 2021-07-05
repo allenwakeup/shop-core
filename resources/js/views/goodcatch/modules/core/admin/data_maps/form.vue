@@ -53,7 +53,7 @@
                 </a-row>
                 <a-row>
                     <a-col>
-                        <a-form-model-item label="左表模版" :labelCol="{span:2}" :wrapperCol="{span:16}" prop="left_tpl">
+                        <a-form-model-item label="左表模板" :labelCol="{span:2}" :wrapperCol="{span:16}" prop="left_tpl">
                             <a-textarea v-model="form.left_tpl" placeholder="用来显示的列，支持字段名+转换规则，
 如：表列名有name、department，想要显示成「department」name前两个字符的拼接格式，
 可以设置成 department::prepend:「|append:」+name::substr:0,2
@@ -100,7 +100,7 @@
                 </a-row>
                 <a-row>
                     <a-col>
-                        <a-form-model-item label="右表模版" :labelCol="{span:2}" :wrapperCol="{span:16}" prop="right_tpl">
+                        <a-form-model-item label="右表模板" :labelCol="{span:2}" :wrapperCol="{span:16}" prop="right_tpl">
                             <a-textarea v-model="form.right_tpl" placeholder="用来显示的列，支持字段名+转换规则，
 如：表列名有name、department，想要显示成「department」name前两个字符的拼接格式，
 可以设置成 department::prepend:「|append:」+name::substr:0,2
@@ -220,10 +220,76 @@
                 },
                 id:0,
                 rules: {
+                    data_route_id: [
+                        {
+                            required: true,
+                            message: '请选择数据路径'
+                        }
+                    ],
+                    left: [
+                        {
+                            required: true,
+                            message: '请填写左表名称'
+                        }
+                    ],
+                    left_table: [
+                        {
+                            required: true,
+                            message: '请选择左表'
+                        }
+                    ],
+                    left_tpl: [
+                        {
+                            required: true,
+                            message: '请填写左表模板'
+                        }
+                    ],
+                    right: [
+                        {
+                            required: true,
+                            message: '请填写右表名称'
+                        }
+                    ],
+                    right_table: [
+                        {
+                            required: true,
+                            message: '请选择右表'
+                        }
+                    ],
+                    right_tpl: [
+                        {
+                            required: true,
+                            message: '请填写右表模板'
+                        }
+                    ],
                     name: [
                         {
                             required: true,
-                            message: '请填写名称'
+                            message: '请填写多态前缀'
+                        }
+                    ],
+                    foreign_pivot_key: [
+                        {
+                            required: true,
+                            message: '请填写Foreign Pivot Key'
+                        }
+                    ],
+                    related_pivot_key: [
+                        {
+                            required: true,
+                            message: '请填写Related Pivot Key'
+                        }
+                    ],
+                    parent_key: [
+                        {
+                            required: true,
+                            message: '请填写Parent Key'
+                        }
+                    ],
+                    related_key: [
+                        {
+                            required: true,
+                            message: '请填写Related Key'
                         }
                     ]
                 },
@@ -321,6 +387,9 @@
                     this.id = this.$route.params.id;
                     this.get_form();
                 }
+                this.getDataRouteSelector();
+                this.getLeftTableSelector();
+                this.getRightTableSelector();
             },
         },
         created() {

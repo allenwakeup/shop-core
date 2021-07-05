@@ -48,7 +48,7 @@ class DataMapObserver
                     'order' => $item->id,
                     'route' => $menu_route,
                     'url' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment', ['id' => $item->id], false) . '?pop=0',
-                    'group' => (isset ($item->data_route) && ! empty ($item->data_route->alias)) ? $item->data_route->alias : $menu->group,
+                    'group' => (isset ($item->dataRoute) && ! empty ($item->dataRoute->alias)) ? $item->dataRoute->alias : $menu->group,
                     'guard_name' => $menu->guard_name,
                     'is_lock_name' => 0
                 ];

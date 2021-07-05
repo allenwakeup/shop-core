@@ -167,11 +167,11 @@ class DataMapController extends Controller
                     dispatch (new SyncDataMappingData (array_merge ($dataMap->toArray (), [
                         'title' => $dataMap->title,
                         'left_id' => $left_id,
-                        'data_route' => isset ($dataMap->data_route) ? $dataMap->data_route->toArray () : [],
-                        'connection' => isset ($dataMap->data_route)
+                        'data_route' => isset ($dataMap->dataRoute) ? $dataMap->dataRoute->toArray () : [],
+                        'connection' => isset ($dataMap->dataRoute)
                             ? (
-                                isset ($dataMap->data_route->connection)
-                                    ? $dataMap->data_route->connection->name
+                                isset ($dataMap->dataRoute->connection)
+                                    ? $dataMap->dataRoute->connection->name
                                     : ''
                             )
                             : ''
@@ -215,10 +215,10 @@ class DataMapController extends Controller
                         'title' => $dataMap->title,
                         'left_id' => $left_id,
                         'detach' => true,
-                        'data_route' => isset ($dataMap->data_route) ? $dataMap->data_route->toArray () : [],
-                        'connection' => isset ($dataMap->data_route)
-                            ? (isset ($dataMap->data_route->connection)
-                                ? $dataMap->data_route->connection->name
+                        'data_route' => isset ($dataMap->dataRoute) ? $dataMap->dataRoute->toArray () : [],
+                        'connection' => isset ($dataMap->dataRoute)
+                            ? (isset ($dataMap->dataRoute->connection)
+                                ? $dataMap->dataRoute->connection->name
                                 : '')
                             : ''
                     ])));

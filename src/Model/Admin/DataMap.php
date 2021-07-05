@@ -10,6 +10,19 @@ class DataMap extends Model
     const STATUS_ENABLE = 1;
     const STATUS_DISABLE = 0;
 
+    const RELATIONSHIPS = [
+        'morphToMany' => '多对多（多态）',
+        'morphTo' => '一对多（多态）',
+        'morphOne' => '一对一 (多态)',
+        'morphMany' => '一对多（多态）',
+        'hasOneThrough' => '远程一对一',
+        'hasOne' => '一对一',
+        'hasManyThrough' => '远程一对多',
+        'hasMany' => '一对多',
+        'belongsToMany' => '多对多',
+        'belongsTo' => '一对多 (反向)'
+    ];
+
     protected $guarded = [];
 
     /**
@@ -38,7 +51,7 @@ class DataMap extends Model
             ]
         ],
         'description' => '描述',
-        'left_tpl' => '左表模版',
+        'left_tpl' => '左表模板',
         'right' => '右表名称',
         'right_table' => [
             'showType' => 'xm-select',
@@ -49,7 +62,7 @@ class DataMap extends Model
                 'limit' => 99999
             ]
         ],
-        'right_tpl' => '右表模版',
+        'right_tpl' => '右表模板',
         'relationship' => [
             'showType' => 'light_dictionary',
             'searchType' => '=',
@@ -96,7 +109,7 @@ class DataMap extends Model
             'event' => 'statusEvent'
         ],
         'left_tpl' => [
-            'title' => '左表模版',
+            'title' => '左表模板',
             'width' => 120,
             'sort' => true
         ],
@@ -111,7 +124,7 @@ class DataMap extends Model
             'sort' => true
         ],
         'right_tpl' => [
-            'title' => '右表模版',
+            'title' => '右表模板',
             'width' => 120,
             'sort' => true
         ],
@@ -136,7 +149,7 @@ class DataMap extends Model
         return "为{$this->left}分配{$this->right}";
     }
 
-    public function data_route ()
+    public function dataRoute ()
     {
         return $this->belongsTo('Goodcatch\Modules\Core\Model\Admin\DataRoute');
     }

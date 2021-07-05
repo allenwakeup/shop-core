@@ -115,7 +115,7 @@ class DataRoute extends Model
         return Arr::get ($this->attributes, 'output');
     }
 
-    public function data_maps ()
+    public function dataMaps ()
     {
         return $this->hasMany('Goodcatch\Modules\Core\Model\Admin\DataMap');
     }

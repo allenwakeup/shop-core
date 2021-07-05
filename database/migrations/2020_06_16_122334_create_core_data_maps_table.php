@@ -18,10 +18,10 @@ class CreateCoreDataMapsTable extends Migration
             $table->unsignedInteger ('data_route_id')->nullable(false)->default(0)->comment('数据路径');
             $table->string('left', 50)->nullable(false)->comment('左映射名称');
             $table->string('left_table', 100)->nullable(false)->comment('左映射表名');
-            $table->string('left_tpl', 500)->nullable()->comment('左表数据显示模版');
+            $table->string('left_tpl', 500)->nullable()->comment('左表数据显示模板');
             $table->string('right', 50)->nullable(false)->comment('右映射名称');
             $table->string('right_table', 100)->nullable(false)->comment('右映射表名');
-            $table->string('right_tpl', 500)->nullable()->comment('右表数据显示模版');
+            $table->string('right_tpl', 500)->nullable()->comment('右表数据显示模板');
             $table->string('relationship', 20)->nullable(false)->default('morphToMany')->comment('关联关系 可选值 多对多（多态）:morphToMany,一对多（多态）:morphTo,一对一 (多态):morphOne,一对多（多态）:morphMany,远程一对一:hasOneThrough,一对一:hasOne,远程一对多:hasManyThrough,一对多:hasMany,多对多:belongsToMany,一对多 (反向):belongsTo');
             $table->string('description', 500)->nullable()->comment('描述');
             $table->string('name', 100)->nullable()->comment('多态名 列名前缀_type');

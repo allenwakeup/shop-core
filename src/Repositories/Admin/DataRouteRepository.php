@@ -39,7 +39,7 @@ class DataRouteRepository extends BaseRepository
     {
         if (isset ($data_route))
         {
-            $data_maps = $data_route->data_maps;
+            $data_maps = $data_route->dataMaps;
 
             $data_from = $data_maps
                 ->filter (function ($item) use ($data_route) {
@@ -130,7 +130,7 @@ class DataRouteRepository extends BaseRepository
     {
         if (isset ($data_route))
         {
-            $data_maps = $data_route->data_maps;
+            $data_maps = $data_route->dataMaps;
 
             $groups = [];
             $data_to = $data_maps

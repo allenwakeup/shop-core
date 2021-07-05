@@ -20,19 +20,6 @@ class DataMapRepository extends BaseRepository
 
     public static $REFLECT_METHOD_ARGS = [];
 
-    const ELOQUENT_RELATIONSHIPS = [
-        'morphToMany' => '多对多（多态）',
-        'morphTo' => '一对多（多态）',
-        'morphOne' => '一对一 (多态)',
-        'morphMany' => '一对多（多态）',
-        'hasOneThrough' => '远程一对一',
-        'hasOne' => '一对一',
-        'hasManyThrough' => '远程一对多',
-        'hasMany' => '一对多',
-        'belongsToMany' => '多对多',
-        'belongsTo' => '一对多 (反向)'
-    ];
-
     public static function list ($perPage, $condition = [], $keyword = null)
     {
         $data = DataMap::query ()
@@ -53,9 +40,9 @@ class DataMapRepository extends BaseRepository
             ->orderBy ('id', 'desc')
             ->paginate ($perPage);
         $data->transform (function ($item) {
-            if (Arr::has (self::ELOQUENT_RELATIONSHIPS, $item->relationship))
+            if (Arr::has (DataMap::RELATIONSHIPS, $item->relationship))
             {
-                $item->relationshipText = Arr::get (self::ELOQUENT_RELATIONSHIPS, $item->relationship, '--');
+                $item->relationshipText = Arr::get (DataMap::RELATIONSHIPS, $item->relationship, '--');
             }
             return $item;
         });
