@@ -22,6 +22,12 @@ export default [
             // 数据映射
             {path:"/Admin/goodcatch/m/core/data_maps",name:"goodcatch_m_core_admin_data_maps",component:()=>import("@/views/goodcatch/modules/core/admin/data_maps/index")},
             {path:"/Admin/goodcatch/m/core/data_maps/form/:id?",name:"goodcatch_m_core_admin_data_maps_form",component:()=>import("@/views/goodcatch/modules/core/admin/data_maps/form")},
+            {
+                path:"/Admin/goodcatch/m/core/data_maps/:id/assignment",
+                name:"goodcatch_m_core_admin_data_maps_assignment",
+                component:() => import ("@/views/goodcatch/modules/core/admin/data_maps/assignment"),
+                props: true
+            },
 
             // 连接
             {path:"/Admin/goodcatch/m/core/connections",name:"goodcatch_m_core_admin_connections",component:()=>import("@/views/goodcatch/modules/core/admin/connections/index")},

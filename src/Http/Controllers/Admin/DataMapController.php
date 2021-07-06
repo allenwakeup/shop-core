@@ -113,6 +113,38 @@ class DataMapController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function showAssignment ($id)
+    {
+
+        $dataMap = DataMap::find ($id);
+
+        $data = [
+            'action' => [
+                'store' => route ('core.data_maps.assignment.store', ['id' => $id, 'left_id' => ':left_id']),
+                'destroy' => route ('core.data_maps.assignment.destroy', ['id' => $id, 'left_id' => ':left_id']),
+            ],
+        ];
+
+        if (isset ($dataMap))
+        {
+            $data ['title'] = $dataMap->left . '-' . $dataMap->right . '映射';
+            $data ['id'] = $id;
+            $data ['mapping'] = $dataMap->left_table . '-' . $dataMap->right_table;
+            $data ['assignment'] = $dataMap;
+            $data ['api'] = route ( 'core.data_maps.assignment.index', ['id' => $id, 'left_id' => $dataMap->left_table]);
+
+        }
+        return $this->success($data,__('base.success'));
+
+    }
+
+
+    /**
      * data mapping left model
      *
      * @param $id datamap ID
@@ -120,19 +152,21 @@ class DataMapController extends Controller
      * @param Request $request
      * @return array
      */
-    public function selectAssignment ($id, $left_id, Request $request) {
+    public function assignment (Request $request, $id, $left_id) {
 
         $dataMap = DataMap::find ($id);
 
-        return $this->success(
-            new DataMapCollection(
-                isset ($dataMap) ? DataMapRepository::select (
-                    $request->per_page??30,
-                    $dataMap,
-                    $left_id,
-                    $request->keyword)
-                    : []));
-
+        try{
+            $data = isset ($dataMap) ? DataMapRepository::select (
+                $request->per_page??30,
+                $dataMap,
+                $left_id,
+                $request->keyword)
+                : [];
+            return $this->success($data,__('base.success'));
+        } catch (QueryException $e) {
+            return $this->error(__('base.error') . $e->getMessage());
+        }
 
 
     }
@@ -145,7 +179,7 @@ class DataMapController extends Controller
      * @param $left_id mapping id
      * @return array results
      */
-    public function saveAssignment (Request $request, $id, $left_id) {
+    public function storeAssignment (Request $request, $id, $left_id) {
         $ids = $request->input ('id.*');
         if (isset ($ids) && count ($ids) > 0)
         {
@@ -170,9 +204,9 @@ class DataMapController extends Controller
                         'data_route' => isset ($dataMap->dataRoute) ? $dataMap->dataRoute->toArray () : [],
                         'connection' => isset ($dataMap->dataRoute)
                             ? (
-                                isset ($dataMap->dataRoute->connection)
-                                    ? $dataMap->dataRoute->connection->name
-                                    : ''
+                            isset ($dataMap->dataRoute->connection)
+                                ? $dataMap->dataRoute->connection->name
+                                : ''
                             )
                             : ''
                     ])));
@@ -197,7 +231,7 @@ class DataMapController extends Controller
      * @param $left_id mapping id
      * @return array result
      */
-    public function deleteAssignment (Request $request, $id, $left_id) {
+    public function destoryAssignment (Request $request, $id, $left_id) {
         $ids = $request->input ('id.*');
         if (isset ($ids) && count ($ids) > 0)
         {

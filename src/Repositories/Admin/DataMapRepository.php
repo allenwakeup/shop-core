@@ -23,7 +23,7 @@ class DataMapRepository extends BaseRepository
     public static function list ($perPage, $condition = [], $keyword = null)
     {
         $data = DataMap::query ()
-            ->with ('data_route')
+            ->with ('dataRoute')
             ->where (function ($query) use ($condition, $keyword) {
                 self::buildQuery ($query, $condition);
                 if (! empty ($keyword))
@@ -135,9 +135,6 @@ class DataMapRepository extends BaseRepository
 
 
         return [
-            'code' => 0,
-            'msg' => '',
-            'count' => isset ($data) ? ($data instanceof Collection ? $data->count () : $data->total ()) : [],
             'data' => isset ($data) ? ($data instanceof Collection ? $data->all () : $data->items ()) : [],
             'right' => isset ($right) ? $right : []
         ];
