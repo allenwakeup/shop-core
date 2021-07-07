@@ -50,95 +50,7 @@ class DataMapRepository extends BaseRepository
         return $data;
     }
 
-    public static function select ($perPage, DataMap $dataMap, $left_id, $keyword = null)
-    {
-        $dataMapTable = $dataMap->right_table;
-        $dataMapKey = $dataMap->related_key;
-        $is_select_left = strcmp ($left_id, $dataMap->left_table) === 0;
-        if ($is_select_left)
-        {
-            $dataMapTable = $dataMap->left_table;
-            $dataMapKey = $dataMap->parent_key;
-        }
 
-        $data = (new Eloquent);
-        if ($is_select_left)
-        {
-            $data = $data->setDataMapTable ($dataMapTable)
-                ->newModelQuery ()
-                ->where (function ($query) use ($dataMap, $keyword) {
-
-                    foreach (explode ('+', $dataMap->left_tpl) as $tpl)
-                    {
-                        $query->orWhere (Arr::first (explode ('::', $tpl, 2)), 'like', '%' . $keyword . '%');
-
-                    }
-                })
-                ->orderBy ('id', 'desc')
-                ->paginate ($perPage);
-        } else {
-
-            $data = $data->setDataMapTable ($dataMap->left_table)->newModelQuery ()->firstWhere ($dataMap->parent_key, $left_id);
-            if (isset ($data))
-            {
-                // $dataMapTable = '_map_' . $dataMapTable;
-
-                $data = $data->setDataMapTable ($dataMap->left_table)->getDataMapping ($dataMapTable);
-
-                if (isset ($data))
-                {
-                    $data = $data->get ();
-
-                    if (isset ($data) && $data->count () > 0)
-                    {
-                        $right = $data->pluck ($dataMap->related_key);
-                    }
-                }
-
-                $data = (new Eloquent)->setDataMapTable ($dataMap->right_table)->newModelQuery ()->get ();
-
-            }
-
-        }
-
-        if (isset ($data))
-        {
-            $data->transform (function ($item) use ($dataMap, $is_select_left, $dataMapKey) {
-
-                $data_map_tpl = $dataMap->right_tpl;
-                if ($is_select_left)
-                {
-                    $data_map_tpl = $dataMap->left_tpl;
-                }
-
-                if (! empty ($data_map_tpl))
-                {
-                    $transform = '';
-                    foreach (explode ('+', $data_map_tpl) as $k => $tpl)
-                    {
-                        [$name, $rules] = array_merge (explode ('::', trim ($tpl), 2), [null]);
-                        $mid_transform = $item->{$name};
-                        if (! empty ($rules)) {
-                            foreach (explode('|', $rules) as $rule) {
-                                $mid_transform = transform_in_rules($rule, $mid_transform);
-                            }
-                        }
-                        $transform .= $mid_transform;
-                    }
-                    $item->title = $transform;
-                }
-                $item->value = $item->{$dataMapKey};
-
-                return $item;
-            });
-        }
-
-
-        return [
-            'data' => isset ($data) ? ($data instanceof Collection ? $data->all () : $data->items ()) : [],
-            'right' => isset ($right) ? $right : []
-        ];
-    }
 
     public static function add ($data)
     {
@@ -170,71 +82,298 @@ class DataMapRepository extends BaseRepository
 
     public static function all ()
     {
-        return Cache::rememberForever (config('modules.cache.key') . '.core.data_maps', function () {
 
-            $value = null;
+        $value = null;
 
-            try {
-                $value = DataMap::ofEnabled ()->get ();
-            } catch (\Exception $e)
+        try {
+            $value = DataMap::ofEnabled ()->get ();
+        } catch (\Exception $e)
+        {
+
+        }
+
+        if (! isset ($value) || $value->isEmpty ()) {
+            return [];
+        }
+
+        return $value->reduce (function ($arr, $item) {
+
+            $item_data = [];
+
+            foreach ($item->toArray () as $k => $v)
             {
-
+                $item_data [Str::camel($k)] = $v;
             }
 
-            if (! isset ($value) || $value->isEmpty ()) {
-                return [];
+            if (! Arr::has ($arr, $item->left_table))
+            {
+                $arr [$item->left_table] = [];
             }
 
-            return $value->reduce (function ($arr, $item) {
+            $args = \collect (self::getEloquentRelationArgs ($item->relationship))->reduce (function ($arr, $arg) use ($item, &$item_data) {
 
-                $item_data = [];
-
-                foreach ($item->toArray () as $k => $v)
+                if (! Arr::has ($item_data, $arg->getName ()))
                 {
-                    $item_data [Str::camel($k)] = $v;
+                    $update_arg_value = null;
+                    switch ($arg->getName ())
+                    {
+                        case 'related':
+                            $update_arg_value = $item->right_table;
+                            break;
+                    }
+                    if (! empty ($update_arg_value))
+                    {
+                        Arr::set ($item_data, $arg->getName (), $update_arg_value);
+                    }
                 }
 
-                if (! Arr::has ($arr, $item->left_table))
+                if (Arr::has ($item_data, $arg->getName ()))
                 {
-                    $arr [$item->left_table] = [];
+                    $arg_value = Arr::get ($item_data, $arg->getName (), null);
+                    array_push ($arr, $arg_value);
                 }
-
-                $args = \collect (self::getEloquentRelationArgs ($item->relationship))->reduce (function ($arr, $arg) use ($item, &$item_data) {
-
-                    if (! Arr::has ($item_data, $arg->getName ()))
-                    {
-                        $update_arg_value = null;
-                        switch ($arg->getName ())
-                        {
-                            case 'related':
-                                $update_arg_value = $item->right_table;
-                                break;
-                        }
-                        if (! empty ($update_arg_value))
-                        {
-                            Arr::set ($item_data, $arg->getName (), $update_arg_value);
-                        }
-                    }
-
-                    if (Arr::has ($item_data, $arg->getName ()))
-                    {
-                        $arg_value = Arr::get ($item_data, $arg->getName (), null);
-                        array_push ($arr, $arg_value);
-                    }
-
-                    return $arr;
-                }, []);
-
-                $arr [$item->left_table] ['_map_' . $item->right_table] = [
-                    'relationship' => $item->relationship,
-                    'args' => $args,
-                    'payload' => $item_data
-                ];
 
                 return $arr;
             }, []);
+
+            $arr [$item->left_table] ['_map_' . $item->right_table] = [
+                'relationship' => $item->relationship,
+                'args' => $args,
+                'payload' => $item_data
+            ];
+
+            return $arr;
+        }, []);
+
+    }
+
+    public static function loadFromCache(){
+        return Cache::rememberForever (config('modules.cache.key') . '.core.data_maps', function () {
+            return self::all();
         });
     }
+
+    public static function assignment ($perPage, DataMap $dataMap, $table_left, $keyword = null){
+        $data = [];
+        if($table_left === $dataMap->left_table){
+            $data = (new Eloquent)->setDataMapTable ($dataMap->left_table)
+                ->newModelQuery ()
+                ->where (function ($query) use ($dataMap, $keyword) {
+
+                    foreach (explode ('+', $dataMap->left_tpl) as $tpl)
+                    {
+                        $query->orWhere (Arr::first (explode ('::', $tpl, 2)), 'like', '%' . $keyword . '%');
+                    }
+                })
+                ->orderBy ('id', 'asc')
+                ->paginate ($perPage);
+
+            $data->transform (function ($item) use ($dataMap) {
+
+                $transform = '';
+                foreach (explode ('+', $dataMap->left_tpl) as $k => $tpl)
+                {
+                    [$name, $rules] = array_merge (explode ('::', trim ($tpl), 2), [null]);
+                    $mid_transform = $item->{$name};
+                    if (! empty ($rules)) {
+                        foreach (explode('|', $rules) as $rule) {
+                            $mid_transform = transform_in_rules($rule, $mid_transform);
+                        }
+                    }
+                    $transform .= $mid_transform;
+                }
+                $item->title = $transform;
+
+                $item->value = $item->{$dataMap->parent_key};
+
+                return $item;
+            });
+
+        }
+
+        return $data;
+    }
+
+    public static function assignmentSource (DataMap $dataMap, $left_id)
+    {
+        // 根据数据映射定义，获取映射左边模型
+        $data = [];
+        $pivot_Eloquent = (new Eloquent)
+            ->setDataMapTable ($dataMap->left_table)
+            ->newModelQuery ()
+            ->firstWhere ($dataMap->parent_key, $left_id);
+        if (isset ($pivot_Eloquent))
+        {
+            $data = (new Eloquent)->setDataMapTable ($dataMap->right_table)->newModelQuery ()->get ();
+
+            $data->transform (function ($item) use ($dataMap) {
+
+                $transform = '';
+                foreach (explode ('+', $dataMap->right_tpl) as $k => $tpl)
+                {
+                    [$name, $rules] = array_merge (explode ('::', trim ($tpl), 2), [null]);
+                    $mid_transform = $item->{$name};
+                    if (! empty ($rules)) {
+                        foreach (explode('|', $rules) as $rule) {
+                            $mid_transform = transform_in_rules($rule, $mid_transform);
+                        }
+                    }
+                    $transform .= $mid_transform;
+                }
+                $item->title = $transform;
+
+                $item->key = $item->{$dataMap->related_key};
+
+                return $item;
+            });
+        }
+        return $data;
+    }
+
+    public static function assignmentTarget (DataMap $dataMap, $left_id)
+    {
+        // 根据数据映射定义，获取映射左边模型
+        $data = [];
+        $pivot_Eloquent = (new Eloquent)
+            ->setDataMapTable ($dataMap->left_table)
+            ->newModelQuery ()
+            ->firstWhere ($dataMap->parent_key, $left_id);
+        if (isset ($pivot_Eloquent))
+        {
+            // $dataMapTable = '_map_' . $dataMapTable;
+
+            // 动态设置左边模型的关联关系（此处当前仅当支持多态多对多关联关系）
+            $pivot_Eloquent = $pivot_Eloquent->setDataMapTable ($dataMap->left_table)->getDataMapping ($dataMap->right_table);
+
+            // 如果存在关联关系
+            if (isset ($pivot_Eloquent))
+            {
+                $data = $pivot_Eloquent->get()->pluck ($dataMap->related_key);
+            }
+        }
+        return $data;
+    }
+//
+//    public static function select ($perPage, DataMap $dataMap, $left_id, $keyword = null)
+//    {
+//        $dataMapTable = $dataMap->right_table;
+//        $dataMapKey = $dataMap->related_key;
+//        $is_select_left = strcmp ($left_id, $dataMap->left_table) === 0;
+//        if ($is_select_left)
+//        {
+//            $dataMapTable = $dataMap->left_table;
+//            $dataMapKey = $dataMap->parent_key;
+//        }
+//
+//        $data = (new Eloquent);
+//        if ($is_select_left)
+//        {
+//            $data = $data->setDataMapTable ($dataMapTable)
+//                ->newModelQuery ()
+//                ->where (function ($query) use ($dataMap, $keyword) {
+//
+//                    foreach (explode ('+', $dataMap->left_tpl) as $tpl)
+//                    {
+//                        $query->orWhere (Arr::first (explode ('::', $tpl, 2)), 'like', '%' . $keyword . '%');
+//
+//                    }
+//                })
+//                ->orderBy ('id', 'desc')
+//                ->paginate ($perPage);
+//        } else {
+//
+//            $data = $data->setDataMapTable ($dataMap->left_table)->newModelQuery ()->firstWhere ($dataMap->parent_key, $left_id);
+//            if (isset ($data))
+//            {
+//                // $dataMapTable = '_map_' . $dataMapTable;
+//
+//                $data = $data->setDataMapTable ($dataMap->left_table)->getDataMapping ($dataMapTable);
+//
+//                if (isset ($data))
+//                {
+//                    $data = $data->get ();
+//
+//                    if (isset ($data) && $data->count () > 0)
+//                    {
+//                        $right = $data->pluck ($dataMap->related_key);
+//                    }
+//                }
+//
+//                $data = (new Eloquent)->setDataMapTable ($dataMap->right_table)->newModelQuery ()->get ();
+//
+//            }
+//
+//        }
+//
+//        if (isset ($data))
+//        {
+//            $data->transform (function ($item) use ($dataMap, $is_select_left, $dataMapKey) {
+//
+//                $data_map_tpl = $dataMap->right_tpl;
+//                if ($is_select_left)
+//                {
+//                    $data_map_tpl = $dataMap->left_tpl;
+//                }
+//
+//                if (! empty ($data_map_tpl))
+//                {
+//                    $transform = '';
+//                    foreach (explode ('+', $data_map_tpl) as $k => $tpl)
+//                    {
+//                        [$name, $rules] = array_merge (explode ('::', trim ($tpl), 2), [null]);
+//                        $mid_transform = $item->{$name};
+//                        if (! empty ($rules)) {
+//                            foreach (explode('|', $rules) as $rule) {
+//                                $mid_transform = transform_in_rules($rule, $mid_transform);
+//                            }
+//                        }
+//                        $transform .= $mid_transform;
+//                    }
+//                    $item->title = $transform;
+//                }
+//                $item->value = $item->{$dataMapKey};
+//
+//                return $item;
+//            });
+//        }
+//
+//
+//        return [
+//            'data' => isset ($data) ? ($data instanceof Collection ? $data->all () : $data->items ()) : [],
+//            'right' => isset ($right) ? $right : []
+//        ];
+//    }
+
+    public static function addAssignments (DataMap $dataMap, $attach, $left_id)
+    {
+        $attached = [];
+        if (isset ($dataMap) && $dataMap->status === DataMap::STATUS_ENABLE)
+        {
+            $attached = (new Eloquent)->setDataMapTable ($dataMap->left_table)
+                ->firstWhere ($dataMap->parent_key, $left_id)
+                ->setDataMapTable ($dataMap->left_table)
+                ->getDataMapping ($dataMap->right_table)
+                ->attach (\collect ($attach)->reduce (function ($arr, $right_id) use ($dataMap) {
+                    $arr [$right_id] = [config ('core.data_mapping.' . $dataMap->relationship . '.right', 'right') . '_type' => $dataMap->right_table];
+                    return $arr;
+                }, []));
+        }
+        return $attached;
+    }
+    public static function deleteAssignments (DataMap $dataMap, $detach, $left_id)
+    {
+        $detach = [];
+        if (isset ($dataMap) && $dataMap->status === DataMap::STATUS_ENABLE)
+        {
+            $detach = (new Eloquent)->setDataMapTable ($dataMap->left_table)
+                ->firstWhere ($dataMap->parent_key, $left_id)
+                ->setDataMapTable ($dataMap->left_table)
+                ->getDataMapping ($dataMap->right_table)
+                ->detach ($detach);
+        }
+        return $detach;
+    }
+
 
     /**
      * get Eloquent method args

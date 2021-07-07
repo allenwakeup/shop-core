@@ -35,9 +35,11 @@ Route::prefix('Admin')->group(function(){
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
                     Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
 
-                    Route::post('/data_maps/{id}/assignment/{left_id}/save', 'DataMapController@storeAssignment')->name('data_maps.assignment.store'); // 数据映射
-                    Route::delete('/data_maps/{id}/assignment/{left_id}/delete', 'DataMapController@destoryAssignment')->name('data_maps.assignment.destroy'); // 数据映射
-                    Route::get('/data_maps/{id}/assignment/{left_id}', 'DataMapController@assignment')->name('data_maps.assignment.index'); // 数据映射
+                    Route::post('/data_maps/{id}/assignment/{left_id}/store', 'DataMapController@storeAssignment')->name('data_maps.assignment.store'); // 数据映射
+                    Route::delete('/data_maps/{id}/assignment/{left_id}/destroy', 'DataMapController@destroyAssignment')->name('data_maps.assignment.destroy'); // 数据映射
+                    Route::get('/data_maps/{id}/assignment/{left_id}/source', 'DataMapController@assignmentSource')->name('data_maps.assignment.source'); // 数据映射
+                    Route::get('/data_maps/{id}/assignment/{left_id}/target', 'DataMapController@assignmentTarget')->name('data_maps.assignment.target'); // 数据映射
+                    Route::get('/data_maps/{id}/assignment/{table_left}', 'DataMapController@assignment')->name('data_maps.assignment.index'); // 数据映射
                     Route::get('/data_maps/{id}/assignment', 'DataMapController@showAssignment')->name('data_maps.assignment.show'); // 数据映射
                 });
             });

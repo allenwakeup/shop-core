@@ -16,7 +16,7 @@ class DataRouteRequest extends FormRequest
     public function rules ()
     {
         return [
-            'name' => ['required', 'max:50', $this->uniqueOrExists (DataRoute::class, 'name') . ':core_dataroutes'],
+            'name' => ['required', 'max:50', $this->uniqueOrExists (DataRoute::class, 'name') . ':core_data_routes'],
             'alias' => 'max:50',
             'short' => 'max:20',
             'description' => 'max:255',

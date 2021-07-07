@@ -1,8 +1,9 @@
 <template>
-
-    <a-assignment :title="info.title" :api="info.api" :actions="actions">
-
-    </a-assignment>
+    <a-assignment
+        :title="info.title"
+        :api="info.api"
+        :actions="info.actions"
+        parameter-replacement=":left_id"></a-assignment>
 </template>
 
 <script>
@@ -11,16 +12,29 @@
 
     export default {
         components: { AAssignment },
-        props: {},
+        props: {
+            assignmentId: {
+                type: Number,
+                default: -1
+            }
+        },
         data() {
             return {
                 id: 0,
                 info: {}
             };
         },
-        watch: {},
+        watch: {
+            _assignmentId(val){
+                if(val > 0){
+                    this.onload();
+                }
+            }
+        },
         computed: {
-
+            _assignmentId(){
+                return this.assignmentId;
+            }
         },
         methods: {
 
@@ -35,6 +49,9 @@
                 // 判断你是否是编辑
                 if(!this.$isEmpty(this.$route.params.id)){
                     this.id = this.$route.params.id;
+                    this.get_form();
+                } else if(this.assignmentId > 0 && this.id !== this.assignmentId){
+                    this.id = this.assignmentId;
                     this.get_form();
                 }
             }

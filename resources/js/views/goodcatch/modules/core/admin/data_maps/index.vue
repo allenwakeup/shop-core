@@ -18,20 +18,36 @@
                 <span slot="right" slot-scope="record">
                     {{ record.right + record.right_table }}
                 </span>
-                <span slot="action" slot-scope="rows">
+                <span slot="action" slot-scope="rows, record">
                     <a-button icon="edit" @click="$router.push('/Admin/goodcatch/m/core/data_maps/form/'+rows.id)">编辑</a-button>
+                    <a-button icon="interaction" @click="handleAssignment(record)">分配</a-button>
                 </span>
             </a-table>
             <div class="admin_pagination" v-if="total>0">
                 <a-pagination v-model="params.page" :page-size.sync="params.per_page" :total="total" @change="onChange" show-less-items />
             </div>
         </div>
+        <a-modal
+            v-model="openAssignmentModal"
+            title="数据映射"
+            body-style="overflow: scroll; height:500px;"
+            :dialog-style="{ top: '20px' }"
+            width="80%"
+            height="600px">
+            <template slot="footer">
+                <span></span>
+            </template>
+            <a-assignment :assignment-id="selectedAssignment.id"></a-assignment>
+        </a-modal>
     </div>
 </template>
 
 <script>
+
+import AAssignment from "./assignment";
+
 export default {
-    components: {},
+    components: { AAssignment },
     props: {},
     data() {
       return {
@@ -62,6 +78,8 @@ export default {
             {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
           ],
           list:[],
+          selectedAssignment: {},
+          openAssignmentModal: false
       };
     },
     watch: {},
@@ -107,6 +125,13 @@ export default {
                 this.list = res.data.data;
             });
         },
+        handleAssignmentClose() {
+            this.openAssignmentModal = false;
+        },
+        handleAssignment(record) {
+            this.selectedAssignment = record;
+            this.openAssignmentModal = true;
+        }
     },
     created() {
         this.onload();

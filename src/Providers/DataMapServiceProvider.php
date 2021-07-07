@@ -19,9 +19,7 @@ class DataMapServiceProvider extends ServiceProvider
      */
     public function boot ()
     {
-        if (!App::environment ('testing')) {
-            $this->loadDataMaps ();
-        }
+        $this->loadDataMaps ();
     }
 
     /**
@@ -38,7 +36,11 @@ class DataMapServiceProvider extends ServiceProvider
     {
         if (! Arr::has ($this->app ['config']->get ('core.data_mapping'), 'defined'))
         {
-            $data_maps = DataMapRepository::all ();
+            if (App::environment ('testing', 'local')) {
+                $data_maps = DataMapRepository::all ();
+            } else {
+                $data_maps = DataMapRepository::loadFromCache ();
+            }
 
             $default = $this->app ['config']->get ('core.data_mapping.default');
 
