@@ -26,7 +26,7 @@ class FlushConnectionThenRestartQueue extends FlushConfigThenRestartQueue
     {
 
         Cache::forget (config('modules.cache.key') . '.core.connections');
-        ConnectionRepository::all ();
+        ConnectionRepository::loadFromCache ();
         parent::handler ();
     }
 }

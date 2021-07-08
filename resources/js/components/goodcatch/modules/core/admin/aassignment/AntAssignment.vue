@@ -5,7 +5,7 @@
         <div class="unline underm"></div>
         <div class="page_body">
             <a-spin v-show="loading"/>
-            <a-row :gutter="8" v-show="!loading">
+            <a-row :gutter="8" v-show="!loading" :style="{height: (height + 'px')}">
                 <a-col :span="7">
                     <a-space direction="vertical">
                         <div>
@@ -14,17 +14,18 @@
                                 @search="onSearchLeft"
                             />
                         </div>
-                        <div class="list_container">
+                        <div class="list_container" :style="{height: (height - 40) + 'px'}" :class="{'inactive' : loading_right}">
                             <a-list
                                 size="small"
                                 class="list"
                                 :loading="loading_left"
                                 item-layout="horizontal"
                                 :data-source="data_left">
-                                <a-list-item slot="renderItem" slot-scope="item, index" @click="showAssignment(item.value)" class="list-item" :class="{'active' : (select_list_item === item.value)}">
+                                <a-list-item slot="renderItem" slot-scope="item, index" @click="showAssignment(item.value)" class="list-item" :class="{'active' : (select_list_item === item.value), 'inactive' : loading_right}">
                                     <a-list-item-meta>
                                         <span slot="title">{{ item.title }}</span>
                                     </a-list-item-meta>
+                                    <a-icon type="check" class="list-item-icon" v-show="select_list_item === item.value"/>
                                 </a-list-item>
                             </a-list>
                         </div>
@@ -40,13 +41,15 @@
                         showSelectAll
                         :list-style="{
                             width: width,
-                            height: height,
+                            height: height + 'px',
 
                         }"
                         :data-source="data_right_source"
                         :target-keys="data_right_target"
+                        :selected-keys="data_right_selected"
                         :render="item => item.title"
-                        @change="handleChange">
+                        @change="handleChange"
+                        @selectChange="handleSelectChange">
                         <span slot="notFoundContent">
                           没数据
                         </span>
@@ -89,8 +92,8 @@
                 default: '40%'
             },
             height: {
-                type: String,
-                default: '420px'
+                type: Number,
+                default: 420
             }
         },
         data() {
@@ -102,7 +105,8 @@
                 loading_right: false,
                 data_left: [],
                 data_right_source: [],
-                data_right_target: []
+                data_right_target: [],
+                data_right_selected: []
             };
         },
         computed: {
@@ -171,6 +175,7 @@
                             this.data_right_target = data_right_target_cp.concat(moveKeys);
                             this.$post(url, params).then(res=> {
                                 if (res.code == 200 || res.code == 201) {
+                                    this.data_right_selected = moveKeys;
                                     this.$message.success(res.msg);
                                 } else {
                                     this.data_right_target = data_right_target_cp;
@@ -194,6 +199,7 @@
                             }, []);
                             this.$delete(url, params).then(res=> {
                                 if (res.code == 200 || res.code == 204) {
+                                    this.data_right_selected = moveKeys;
                                     this.$message.success(res.msg);
                                 } else {
                                     this.data_right_target = data_right_target_cp;
@@ -205,9 +211,9 @@
                             break;
                     }
                 }
-
-
-
+            },
+            handleSelectChange(sourceSelectedKeys, targetSelectedKeys){
+                this.data_right_selected = [...sourceSelectedKeys, ...targetSelectedKeys];
             },
             isEmpty(value){
                 return typeof value === 'undefined'
@@ -227,17 +233,47 @@
     }
 
     .active {
+
+    }
+
+    .ant-list-item-meta-title.inactive {
+        color: #9c839f;
+    }
+
+    .list_container{
+        border: 1px solid #e8e8e8;
+        border-radius: 4px;
+        overflow: auto;
+        padding: 0 5px 60px 5px;
+    }
+
+    .list_container.inactive {
+        background-color: #f9f9f9;
+    }
+
+    .list-item {
+        padding: 5px 7px;
+        margin-bottom: 0px;
+
+        .list-item-icon {
+            color: #d9ecff;
+            font-size: 20px;
+        }
+    }
+
+    .list-item.active {
         background-color: #547dc0;
         border-radius: 5px;
         box-shadow: 0 2px 12px 0 #cfcfcf;
         .ant-list-item-meta-title {
-            color: #d9ecff;
+            color: #d9ecff!important;
         }
     }
 
-    .list-item {
-        padding: 7px 5px;
-
+    .list-item.inactive {
+        .ant-list-item-meta-title {
+            color: #98939f;
+        }
     }
 
 </style>

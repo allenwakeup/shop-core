@@ -70,47 +70,51 @@ class ConnectionRepository extends BaseRepository
 
     public static function all ()
     {
+        $connection = new Connection;
+        if(!Schema::hasTable($connection->getTable())){
+            return [];
+        }
+
+        $value = $connection::ofEnabled ()->get ();
+        if ($value->isEmpty ()) {
+            return [];
+        }
+
+        return $value->mapWithKeys (function ($item) {
+
+            $item_data = $item->toArray ();
+            $connection = [];
+            foreach (explode (',', $item->datasource->requires . ',' . $item->datasource->options) as $key)
+            {
+                $key = explode (':', trim($key), 2) [0];
+
+                if (! empty ($key))
+                {
+                    $connection [$key] = Arr::get ($item_data, $key, '');
+                }
+            }
+
+            Arr::set ($connection, 'type', $item->type);
+            Arr::set ($connection, 'name', $item->name);
+
+            if (Arr::has ($connection, 'options') && empty (Arr::get ($connection, 'options', '')))
+            {
+                unset ($connection ['options']);
+            }
+
+            if (! empty ($item->options))
+            {
+                Arr::set ($connection, 'options', $item->options);
+            }
+
+            return [$item->type . '_' . $item->name => $connection];
+        })->all ();
+    }
+
+    public static function loadFromCache (){
         return Cache::rememberForever (config('modules.cache.key') . '.core.connections', function () {
-
-            $connection = new Connection;
-            if(!Schema::hasTable($connection->getTable())){
-                return [];
-            }
-
-            $value = $connection::ofEnabled ()->get ();
-            if ($value->isEmpty ()) {
-                return [];
-            }
-
-            return $value->mapWithKeys (function ($item) {
-
-                $item_data = $item->toArray ();
-                $connection = [];
-                foreach (explode (',', $item->datasource->requires . ',' . $item->datasource->options) as $key)
-                {
-                    $key = explode (':', trim($key), 2) [0];
-
-                    if (! empty ($key))
-                    {
-                        $connection [$key] = Arr::get ($item_data, $key, '');
-                    }
-                }
-
-                Arr::set ($connection, 'type', $item->type);
-                Arr::set ($connection, 'name', $item->name);
-
-                if (Arr::has ($connection, 'options') && empty (Arr::get ($connection, 'options', '')))
-                {
-                    unset ($connection ['options']);
-                }
-
-                if (! empty ($item->options))
-                {
-                    Arr::set ($connection, 'options', $item->options);
-                }
-
-                return [$item->type . '_' . $item->name => $connection];
-            })->all ();
+            return self::all();
         });
+
     }
 }

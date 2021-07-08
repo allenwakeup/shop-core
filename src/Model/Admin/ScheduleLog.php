@@ -6,6 +6,8 @@
 namespace Goodcatch\Modules\Core\Model\Admin;
 
 
+use Carbon\Carbon;
+
 class ScheduleLog extends Model
 {
     const STATUS_SUCCESS = 1;
@@ -28,5 +30,13 @@ class ScheduleLog extends Model
     public function scopeOfFailure ($query) {
         return $query->where ('status', self::STATUS_FAILED);
     }
+
+    public function getCreatedAtHumanAttribute (){
+        return Carbon::parse($this->attributes['created_at'])->diffForHumans();
+    }
+    public function getUpdatedAtHumanAttribute (){
+        return Carbon::parse($this->attributes['updated_at'])->diffForHumans();
+    }
+
 
 }

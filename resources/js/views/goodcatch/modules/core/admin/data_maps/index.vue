@@ -125,9 +125,6 @@ export default {
                 this.list = res.data.data;
             });
         },
-        handleAssignmentClose() {
-            this.openAssignmentModal = false;
-        },
         handleAssignment(record) {
             this.selectedAssignment = record;
             this.openAssignmentModal = true;

@@ -28,11 +28,12 @@ Route::prefix('Admin')->group(function(){
                         'areas'=>'AreaController', // 区域
                         'datasources'=>'DatasourceController', // 区域
                         'connections'=>'ConnectionController', // 连接
-                        'schedules'=>'ScheduleController', // 计划与任务
                         'data_routes'=>'DataRouteController', // 数据路径
                         'data_maps'=>'DataMapController', // 数据映射
+                        'schedules'=>'ScheduleController', // 计划与任务
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
+                    Route::get('/schedules/{id}/logs', 'ScheduleController@logs')->name('schedules.logs'); // 计划任务日志
                     Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
 
                     Route::post('/data_maps/{id}/assignment/{left_id}/store', 'DataMapController@storeAssignment')->name('data_maps.assignment.store'); // 数据映射

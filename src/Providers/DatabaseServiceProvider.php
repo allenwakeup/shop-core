@@ -46,7 +46,7 @@ class DatabaseServiceProvider extends ServiceProvider
 
     protected function loadConnections ()
     {
-        $connections = ConnectionRepository::all ();
+        $connections = ConnectionRepository::loadFromCache ();
 
         if (isset ($connections) && count ($connections) > 0)
         {

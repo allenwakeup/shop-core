@@ -335,7 +335,7 @@
                 <a-form-model-item label="执行周期">
                     <a-cron
                             ref="innerVueCron"
-                            :decorator="['cronExpression', {'initialValue': form.cron + '', rules: [{ required: true, message: '请输入cron表达式!' }]}]"
+                            :value="form.cron"
                             @change="setCorn"></a-cron>
                 </a-form-model-item>
                 <a-form-model-item label="其他设置" v-show="showFormItem['overlapping']">
@@ -464,9 +464,13 @@
 
                 this.$refs.form.validate(valid => {
                     if (valid) {
+                        const params = Object.assign({}, this.form, {
+                            logs: '',
+                            payload: this.form.payload ? JSON.stringify(this.form.payload) : ''
+                        });
                         if(test){
                             this.loading_test = true;
-                            this.$post(this.$api.moduleCoreTestConnection,this.form).then(res=>{
+                            this.$post(this.$api.moduleCoreSchedules, params).then(res=>{
                                 if(res.code == 200 || res.code == 201){
                                     this.loading_test = false;
                                     this.test = true;
@@ -479,9 +483,9 @@
                             });
 
                         } else {
-                            let api = this.$apiHandle(this.$api.moduleCoreConnections,this.id);
+                            let api = this.$apiHandle(this.$api.moduleCoreSchedules,this.id);
                             if(api.status){
-                                this.$put(api.url,this.form).then(res=>{
+                                this.$put(api.url, params).then(res=>{
                                     if(res.code == 200){
                                         this.$message.success(res.msg)
                                         return this.$router.back();
@@ -490,7 +494,7 @@
                                     }
                                 })
                             }else{
-                                this.$post(api.url,this.form).then(res=>{
+                                this.$post(api.url, params).then(res=>{
                                     if(res.code == 200 || res.code == 201){
                                         this.$message.success(res.msg)
                                         return this.$router.back();
@@ -530,6 +534,9 @@
             onChangeOnceOptions(checked){
                 this.form.once = checked ? 1 : 0;
             },
+            onChangeStartOptions(checked){
+                this.form.start = checked ? 1 : 0;
+            },
 
             onChangeOrder(value){
                 this.form.order = value;
@@ -541,8 +548,11 @@
                 this.form.status = checked ? 1 : 0;
             },
             get_form(){
-                this.$get(this.$api.moduleCoreConnections+'/'+this.id).then(res=>{
+                this.$get(this.$api.moduleCoreSchedules+'/'+this.id).then(res=>{
                     this.form = res.data;
+                    if(res.data.schedule_type && res.data.input){
+                        this.form['input' + res.data.schedule_type] = res.data.input;
+                    }
                 });
             },
             handleScheduleTypeChange(value){

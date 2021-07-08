@@ -66,7 +66,7 @@ export default {
                 cancelText: '取消',
                 onOk:()=> {
                     let ids = this.selectedRowKeys.join(',');
-                    this.$delete(this.$api.moduleCoreAreas+'/'+ids).then(res=>{
+                    this.$delete(this.$api.moduleCoreDatasources+'/'+ids).then(res=>{
                         if(res.code == 200){
                             this.onload();
                             this.$message.success('删除成功');

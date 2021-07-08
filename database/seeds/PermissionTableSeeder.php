@@ -107,7 +107,9 @@ class PermissionTableSeeder extends Seeder
             // 服务管理
             // 计划与任务
             $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '计划与任务') => [
-                self::MODULE_ALIAS . '.schedules'
+                self::MODULE_ALIAS . '.schedules' => array_merge($this->api_actions, [
+                    'logs' => ['name' => '日志列表', 'content' => '任务执行日志展示']
+                ])
             ]
 
         ];

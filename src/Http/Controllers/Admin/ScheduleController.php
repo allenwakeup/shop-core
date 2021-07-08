@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Goodcatch\Modules\Core\Http\Resources\Admin\ScheduleResource\ScheduleCollection;
 use Goodcatch\Modules\Core\Http\Requests\Admin\ScheduleRequest;
 use Goodcatch\Modules\Core\Model\Admin\Schedule;
+use Goodcatch\Modules\Core\Repositories\Admin\ScheduleLogRepository;
 use Goodcatch\Modules\Core\Repositories\Admin\ScheduleRepository;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -36,7 +37,25 @@ class ScheduleController extends Controller
                 $request->per_page??30,
                 $request->only($this->formNames),
                 $request->keyword
-            )));
+            )), __('base.success'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Request $request
+     * @param $id number Schecule ID
+     * @return \Illuminate\Http\Response
+     */
+    public function logs(Request $request, $id)
+    {
+        return $this->success(
+            ScheduleLogRepository::recent(
+                $request->per_page??30,
+                $id,
+                $request->keyword
+            ), __('base.success')
+        );
     }
 
     /**
@@ -47,7 +66,7 @@ class ScheduleController extends Controller
      */
     public function show($id)
     {
-        return $this->success(ScheduleRepository::find($id));
+        return $this->success(ScheduleRepository::find($id), __('base.success'));
     }
 
     /**
