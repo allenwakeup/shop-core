@@ -188,7 +188,7 @@ export default {
                 }else{
                     return this.$message.error(res.msg);
                 }
-            }).cache(()=>this.loading_status ['_' + record.id] = false);
+            }).catch(()=>this.loading_status ['_' + record.id] = false);
         },
         handleNameClick(record){
             this.loading_start['_' + record.id] = true;

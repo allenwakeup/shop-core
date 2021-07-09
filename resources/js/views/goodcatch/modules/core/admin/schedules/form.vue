@@ -372,13 +372,13 @@
                     <a-input-number v-model="form.order" :min="0" @change="onChangeOrder" />
                 </a-form-model-item>
                 <a-form-model-item label="状态">
-                    <a-switch checked-children="启用" un-checked-children="禁用" default-checked @change="onChangeStatus"/>
+                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status" @change="onChangeStatus"/>
                 </a-form-model-item>
-                <a-form-model-item label="单次任务" v-show="showFormItem['once']">
-                    <a-switch checked-children="是" un-checked-children="否" @change="onChangeOnceOptions"/>
+                <a-form-model-item label="单次任务" v-show="form.status === 1">
+                    <a-switch checked-children="是" un-checked-children="否" :checked="form.once" @change="onChangeOnceOptions"/>
                 </a-form-model-item>
-                <a-form-model-item label="立即启动" v-show="showFormItem['start']">
-                    <a-switch checked-children="启动" un-checked-children="否" @change="onChangeStartOptions"/>
+                <a-form-model-item label="立即启动" v-show="id === 0 || form.schedule_type !== 3">
+                    <a-switch checked-children="启动" un-checked-children="否" :checked="form.start" @change="onChangeStartOptions"/>
                 </a-form-model-item>
                 <a-form-model-item :wrapper-col="{ span: 12, offset: 5 }">
                     <a-button type="primary" @click="handleSubmit">提交</a-button>
@@ -428,7 +428,8 @@
                     once: 1,
                     group: '',
                     order: 1,
-                    status: 1
+                    status: 1,
+                    start: 0
                 },
                 id:0,
                 rules: {
@@ -439,6 +440,9 @@
                         }
                     ]
                 },
+                test: {
+                    loading: false
+                }
             };
         },
         watch: {},
@@ -454,13 +458,11 @@
                     }
                 }
                 [1, 2, 3].forEach(el => items ['input' + el] = (el === this.form.schedule_type));
-                items['once'] = this.form.status === 1;
-                items['start'] = this.form.status === 1;
                 return items;
             }
         },
         methods: {
-            handleSubmit(test){
+            handleSubmit(){
 
                 this.$refs.form.validate(valid => {
                     if (valid) {
@@ -468,41 +470,25 @@
                             logs: '',
                             payload: this.form.payload ? JSON.stringify(this.form.payload) : ''
                         });
-                        if(test){
-                            this.loading_test = true;
-                            this.$post(this.$api.moduleCoreSchedules, params).then(res=>{
-                                if(res.code == 200 || res.code == 201){
-                                    this.loading_test = false;
-                                    this.test = true;
-                                    return this.$message.success(res.msg);
+                        let api = this.$apiHandle(this.$api.moduleCoreSchedules,this.id);
+                        if(api.status){
+                            this.$put(api.url, params).then(res=>{
+                                if(res.code == 200){
+                                    this.$message.success(res.msg)
+                                    return this.$router.back();
                                 }else{
-                                    this.loading_test = false;
-                                    this.test = false;
+                                    return this.$message.error(res.msg)
+                                }
+                            })
+                        }else{
+                            this.$post(api.url, params).then(res=>{
+                                if(res.code == 200 || res.code == 201){
+                                    this.$message.success(res.msg)
+                                    return this.$router.back();
+                                }else{
                                     return this.$message.error(res.msg);
                                 }
-                            });
-
-                        } else {
-                            let api = this.$apiHandle(this.$api.moduleCoreSchedules,this.id);
-                            if(api.status){
-                                this.$put(api.url, params).then(res=>{
-                                    if(res.code == 200){
-                                        this.$message.success(res.msg)
-                                        return this.$router.back();
-                                    }else{
-                                        return this.$message.error(res.msg)
-                                    }
-                                })
-                            }else{
-                                this.$post(api.url, params).then(res=>{
-                                    if(res.code == 200 || res.code == 201){
-                                        this.$message.success(res.msg)
-                                        return this.$router.back();
-                                    }else{
-                                        return this.$message.error(res.msg);
-                                    }
-                                })
-                            }
+                            })
                         }
 
                     } else {
@@ -510,8 +496,6 @@
                         return false;
                     }
                 });
-
-
             },
 
             onChangeMoreOptions(checked){
@@ -576,30 +560,6 @@
             },
             setCorn(cron){
                 this.form.cron = cron;
-            },
-            setDynamicFormItems(datasource){
-                if(datasource){
-                    this.form.driver = datasource.code;
-                    this.formItemRequires = {};
-                    let rules = {};
-                    datasource.requires.split(',').forEach (field => {
-                        const [key, value] = field.split (':');
-                        this.formItemRequires [key] = true;
-                        this.form [key] = value;
-                        rules[key] = {
-                            required: true,
-                            message: '请填写内容'
-                        }
-                    });
-                    datasource.options.split(',').forEach (field => {
-                        const [key, value] = field.split (':');
-                        this.formItemRequires [key] = false;
-                        this.form [key] = value;
-                    });
-                    this.datasource_rules = rules;
-
-                    this.test = false;
-                }
             },
 
             // 获取列表

@@ -2,6 +2,7 @@
 
 namespace Goodcatch\Modules\Core\Providers;
 
+use Goodcatch\Modules\Core\Repositories\Admin\DataMapRepository;
 use Illuminate\Support\Facades\Route;
 use Goodcatch\Modules\Providers\RouteServiceProvider as ServiceProvider;
 

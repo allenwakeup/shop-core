@@ -124,10 +124,10 @@ class DataMapController extends Controller
 
         $data = [
             'actions' => [
-                'source' => route ('core.data_maps.assignment.source', ['id' => $id, 'left_id' => ':left_id']),
-                'target' => route ('core.data_maps.assignment.target', ['id' => $id, 'left_id' => ':left_id']),
-                'right' => route ('core.data_maps.assignment.store', ['id' => $id, 'left_id' => ':left_id']),
-                'left' => route ('core.data_maps.assignment.destroy', ['id' => $id, 'left_id' => ':left_id']),
+                'source' => route ("core.data_maps.{$id}.assignment.source", ['id' => $id, 'left_id' => ':left_id']),
+                'target' => route ("core.data_maps.{$id}.assignment.target", ['id' => $id, 'left_id' => ':left_id']),
+                'right' => route ("core.data_maps.{$id}.assignment.store", ['id' => $id, 'left_id' => ':left_id']),
+                'left' => route ("core.data_maps.{$id}.assignment.destroy", ['id' => $id, 'left_id' => ':left_id']),
             ],
         ];
 
@@ -135,7 +135,7 @@ class DataMapController extends Controller
         {
             $data ['title'] = $dataMap->left . '-' . $dataMap->right . '映射';
             $data ['assignment'] = $dataMap;
-            $data ['api'] = route ( 'core.data_maps.assignment.index', ['id' => $id, 'table_left' => $dataMap->left_table]);
+            $data ['api'] = route ( "core.data_maps.{$id}.assignment.index", ['id' => $id, 'table_left' => $dataMap->left_table]);
 
         }
         return $this->success($data,__('base.success'));

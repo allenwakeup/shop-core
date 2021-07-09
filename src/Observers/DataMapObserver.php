@@ -3,7 +3,9 @@
 
 namespace Goodcatch\Modules\Core\Observers;
 
+use Goodcatch\Modules\Qwshop\Traits\PermissionSeedsTrait;
 use Goodcatch\Modules\Core\Model\Admin\DataMap;
+
 use Illuminate\Support\Arr;
 
 
@@ -16,61 +18,78 @@ use Illuminate\Support\Arr;
 class DataMapObserver
 {
 
-    const PERMISSION_SERVICE_ALIAS = 'modules.service.permission';
+    use PermissionSeedsTrait;
+
+    const PERMISSION_SERVICE_ALIAS = 'MenuService';
+
+    const MODULE_NAME = '核心模块';
+    const MODULE_ALIAS = 'core';
 
 
     // creating, created, updating, updated, saving
     // saved, deleting, deleted, restoring, restored
     public function created (DataMap $item)
     {
-        // load menu from other module, e.g Lightcms
+
         module_tap (self::PERMISSION_SERVICE_ALIAS, function ($permission_service) use ($item) {
 
-            // get menu query builder from application abstract
-            $menu = $permission_service->query ()
-                ->where ('route', 'admin::' . module_route_prefix ('.') . '.core.dataMap.assignment')
-                ->where ('route_params', '')
-                ->first ()
-            ;
+            $permission_service->setSeedsMenus([
+                [
+                    'name' => self::MODULE_NAME,
+                    'children' => [
+                        [
+                            'name' => $item->title,
+                            'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps/{$item->id}/{$item->id}/assignment"),
+                        ]
+                    ]
+                ]
+            ])->setSeedsPermissionGroups([
+                // 数据映射
+                $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据映射') => [
+                    self::MODULE_ALIAS . ".data_maps.{$item->id}" => [
+                        'assignment.index' => [
+                            'name' => '列表',
+                            'content' => "数据映射{$item->left}列表展示"
+                        ],
+                        'assignment.source' => [
+                            'name' => '未分配列表',
+                            'content' => "数据映射{$item->left}未分配列表展示"
+                        ],
+                        'assignment.target' => [
+                            'name' => '已分配列表',
+                            'content' => "数据映射{$item->left}已分配列表展示"],
+                        'assignment.store' => [
+                            'name' => '添加',
+                            'content' => "添加{$item->left}到{$item->right}的数据映射"],
+                        'assignment.show' => [
+                            'name' => '详情', 'content' => "数据映射{$item->left}-{$item->right}详情"],
+                        'assignment.destroy' => [
+                            'name' => '删除',
+                            'content' => "删除{$item->left}到{$item->right}的数据映射"
+                        ]
+                    ]
+                ]
+            ])->run();
 
-            if (isset ($menu))
-            {
-                // load root menu from other module
-
-                $root_menu = $permission_service->retrieve (['route' => $menu->route]);
-
-                $menu_route = $menu->route . '.' . ($item->left_table . '_' . $item->right_table);
-
-                $data = [
-                    'name' => $item->title,
-                    'pid' => empty ($root_menu) ? $menu->id : Arr::get ($root_menu, 'id', $menu->id),
-                    'status' => 1,
-                    'order' => $item->id,
-                    'route' => $menu_route,
-                    'url' => route ('admin::' . module_route_prefix ('.') . 'core.dataMap.assignment', ['id' => $item->id], false) . '?pop=0',
-                    'group' => (isset ($item->dataRoute) && ! empty ($item->dataRoute->alias)) ? $item->dataRoute->alias : $menu->group,
-                    'guard_name' => $menu->guard_name,
-                    'is_lock_name' => 0
-                ];
-
-                $new_menu = $permission_service->save ($data, ['route' => $menu_route]);
-                if (isset ($new_menu))
-                {
-                    $permission_service->flush ();
-                }
-
-            }
+            $permission_service->flush();
         });
 
     }
 
     public function deleting (DataMap $item)
     {
-        $menu_route = 'admin::' . module_route_prefix ('.') . 'core.dataMap.assignment.' . ($item->left_table . '_' . $item->right_table);
+        module_tap (self::PERMISSION_SERVICE_ALIAS, function ($permission_service) use ($item) {
 
-        module_tap (self::PERMISSION_SERVICE_ALIAS, function ($permission_service) use ($menu_route) {
-
-            $permission_service->query ()->where ('route', $menu_route)->delete ();
+            $permission_service->remove([
+                $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps/dynamic/{$item->id}/assignment")
+            ], [
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.index",
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.source",
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.target",
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.store",
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.show",
+                self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.destroy",
+            ]);
 
             $permission_service->flush ();
 

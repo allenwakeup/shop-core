@@ -1,5 +1,6 @@
 <?php
 
+use Goodcatch\Modules\Core\Repositories\Admin\DataMapRepository;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,20 +29,23 @@ Route::prefix('Admin')->group(function(){
                         'areas'=>'AreaController', // 区域
                         'datasources'=>'DatasourceController', // 区域
                         'connections'=>'ConnectionController', // 连接
+                        'schedules'=>'ScheduleController', // 计划与任务
                         'data_routes'=>'DataRouteController', // 数据路径
                         'data_maps'=>'DataMapController', // 数据映射
-                        'schedules'=>'ScheduleController', // 计划与任务
                     ]);
                     Route::get('/databases', 'DatabaseController@index')->name('databases.index'); // 数据库
-                    Route::get('/schedules/{id}/logs', 'ScheduleController@logs')->name('schedules.logs'); // 计划任务日志
                     Route::post('/connections/test', 'ConnectionController@test')->name('connections.test'); // 数据库
+                    Route::get('/schedules/{id}/logs', 'ScheduleController@logs')->name('schedules.logs'); // 计划任务日志
 
-                    Route::post('/data_maps/{id}/assignment/{left_id}/store', 'DataMapController@storeAssignment')->name('data_maps.assignment.store'); // 数据映射
-                    Route::delete('/data_maps/{id}/assignment/{left_id}/destroy', 'DataMapController@destroyAssignment')->name('data_maps.assignment.destroy'); // 数据映射
-                    Route::get('/data_maps/{id}/assignment/{left_id}/source', 'DataMapController@assignmentSource')->name('data_maps.assignment.source'); // 数据映射
-                    Route::get('/data_maps/{id}/assignment/{left_id}/target', 'DataMapController@assignmentTarget')->name('data_maps.assignment.target'); // 数据映射
-                    Route::get('/data_maps/{id}/assignment/{table_left}', 'DataMapController@assignment')->name('data_maps.assignment.index'); // 数据映射
-                    Route::get('/data_maps/{id}/assignment', 'DataMapController@showAssignment')->name('data_maps.assignment.show'); // 数据映射
+                    DataMapRepository::loadEnabledFromCache()->each(function($item){
+                        $data_map_id = $item['id'];
+                        Route::post("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/store", 'DataMapController@storeAssignment')->name("data_maps.{$data_map_id}.assignment.store");
+                        Route::delete("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/destroy", 'DataMapController@destoryAssignment')->name("data_maps.{$data_map_id}.assignment.destroy");
+                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/source", 'DataMapController@assignmentSource')->name("data_maps.{$data_map_id}.assignment.source");
+                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/target", 'DataMapController@assignmentTarget')->name("data_maps.{$data_map_id}.assignment.target");
+                        Route::get("/data_maps/{$data_map_id}/{id}/assignment", 'DataMapController@showAssignment')->name("data_maps.{$data_map_id}.assignment.show");
+                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{table_left}", 'DataMapController@assignment')->name("data_maps.{$data_map_id}.assignment.index");
+                    });
                 });
             });
         });

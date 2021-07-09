@@ -35,6 +35,20 @@ php artisan module:seed core
 
 ```
 
+#### queue
+
+```shell script
+
+php artisan queue:work redis --queue=high,default,emails,low --sleep=3 --tries=3 --delay=2 --timeout=600
+
+
+```
+
+#### schedule
+```shell script
+php artisan schedule:run >> /dev/null 2>&1
+
+```
 
 ### Lightcms part
 

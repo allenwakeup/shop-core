@@ -80,17 +80,20 @@ class DataMapRepository extends BaseRepository
         return DataMap::destroy ($id);
     }
 
-    public static function all ()
+    public static function allEnabled() {
+        return DataMap::ofEnabled ()->get ()->toArray();
+    }
+
+    public static function loadEnabledFromCache(){
+        return Cache::rememberForever (config('modules.cache.key') . '.core.data_maps.enabled', function () {
+            return \collect(self::allEnabled());
+        });
+    }
+
+    public static function relationships ()
     {
 
-        $value = null;
-
-        try {
-            $value = DataMap::ofEnabled ()->get ();
-        } catch (\Exception $e)
-        {
-
-        }
+        $value = self::loadEnabledFromCache ();
 
         if (! isset ($value) || $value->isEmpty ()) {
             return [];
@@ -105,12 +108,12 @@ class DataMapRepository extends BaseRepository
                 $item_data [Str::camel($k)] = $v;
             }
 
-            if (! Arr::has ($arr, $item->left_table))
+            if (! Arr::has ($arr, Arr::get($item, 'left_table')))
             {
-                $arr [$item->left_table] = [];
+                $arr [Arr::get($item, 'left_table')] = [];
             }
 
-            $args = \collect (self::getEloquentRelationArgs ($item->relationship))->reduce (function ($arr, $arg) use ($item, &$item_data) {
+            $args = \collect (self::getEloquentRelationArgs (Arr::get($item, 'relationship')))->reduce (function ($arr, $arg) use ($item, &$item_data) {
 
                 if (! Arr::has ($item_data, $arg->getName ()))
                 {
@@ -118,7 +121,7 @@ class DataMapRepository extends BaseRepository
                     switch ($arg->getName ())
                     {
                         case 'related':
-                            $update_arg_value = $item->right_table;
+                            $update_arg_value = Arr::get($item, 'right_table');
                             break;
                     }
                     if (! empty ($update_arg_value))
@@ -136,8 +139,8 @@ class DataMapRepository extends BaseRepository
                 return $arr;
             }, []);
 
-            $arr [$item->left_table] ['_map_' . $item->right_table] = [
-                'relationship' => $item->relationship,
+            $arr [Arr::get($item, 'left_table')] ['_map_' . Arr::get($item, 'right_table')] = [
+                'relationship' => Arr::get($item, 'relationship'),
                 'args' => $args,
                 'payload' => $item_data
             ];
@@ -149,7 +152,7 @@ class DataMapRepository extends BaseRepository
 
     public static function loadFromCache(){
         return Cache::rememberForever (config('modules.cache.key') . '.core.data_maps', function () {
-            return self::all();
+            return self::relationships();
         });
     }
 
@@ -182,11 +185,11 @@ class DataMapRepository extends BaseRepository
                     }
                     $transform .= $mid_transform;
                 }
-                $item->title = $transform;
 
-                $item->value = $item->{$dataMap->parent_key};
-
-                return $item;
+                return [
+                    'title' => $transform,
+                    'value' => $item->{$dataMap->parent_key}
+                ];
             });
 
         }
@@ -220,11 +223,11 @@ class DataMapRepository extends BaseRepository
                     }
                     $transform .= $mid_transform;
                 }
-                $item->title = $transform;
 
-                $item->key = $item->{$dataMap->related_key};
-
-                return $item;
+                return [
+                    'title' => $transform,
+                    'key' => $item->{$dataMap->related_key}
+                ];
             });
         }
         return $data;

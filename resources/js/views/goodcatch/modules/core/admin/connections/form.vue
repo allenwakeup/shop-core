@@ -10,6 +10,7 @@
                 <a-form-model-item label="数据源" prop="datasource_id" v-show="showFormItem['datasource_id']">
                     <a-row :gutter="8">
                         <a-col :span="12">
+                            <a-spin v-show="loading_datasource"></a-spin>
                             <a-select
                                     show-search
                                     placeholder="选择数据源"
@@ -18,6 +19,7 @@
                                     :filter-option="false"
                                     not-found-content="没有更多的数据源"
                                     style="width: 200px"
+                                    :style="{display: loading_datasource ? 'none' : ''}"
                                     @search="handleDatasourceSearch"
                                     @change="handleDatasourceChange" >
                                 <a-select-option v-for="item in datasources" :key="item.id" :value="item.id">
@@ -49,16 +51,15 @@
                     <a-input-number v-model="form.port" :min="1024" @change="onChangePort" />
                 </a-form-model-item>
                 <a-form-model-item label="数据库名" prop="database" v-show="showFormItem['database']">
-                    <a-input v-model="form.database"></a-input>
+                    <a-input v-model="form.database" placeholder="请输入数据库名"></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="用户名" prop="username" v-show="showFormItem['username']">
-                    <a-input v-model="form.username"></a-input>
+                    <a-input v-model="form.username" placeholder="请输入用户名"></a-input>
                 </a-form-model-item>
-                <a-form-model-item label="密码" prop="password" v-show="showFormItem['password']">
-                    <a-input-password v-model="form.password" placeholder="输入密码=">
-                        <a-icon slot="prefix" type="password" />
-                        <a-tooltip slot="suffix" title="留空表示不修改密码">
-                            <a-icon type="info-circle" />
+                <a-form-model-item label="密码" v-show="showFormItem['password']">
+                    <a-input-password v-model="form_password" placeholder="请输入密码">
+                        <a-tooltip slot="prefix" title="留空表示不修改密码">
+                            <a-icon type="lock" />
                         </a-tooltip>
                     </a-input-password>
                 </a-form-model-item>
@@ -87,7 +88,7 @@
                     <a-input v-model="form.schema"></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="严格模式" prop="strict" v-show="showFormItem['strict']">
-                    <a-switch checked-children="开启" un-checked-children="关闭" default-checked @change="onChangeStrictOptions"/>
+                    <a-switch checked-children="开启" un-checked-children="关闭" :checked="form.strict" @change="onChangeStrictOptions"/>
                 </a-form-model-item>
                 <a-form-model-item label="Engine" prop="engine" v-show="showFormItem['engine']">
                     <a-input v-model="form.engine"></a-input>
@@ -121,7 +122,7 @@
                     <a-input-number v-model="form.order" :min="0" @change="onChangeOrder" />
                 </a-form-model-item>
                 <a-form-model-item label="状态" prop="status" v-show="showFormItem['status']">
-                    <a-switch checked-children="启用" un-checked-children="禁用" default-checked @change="onChangeStatus"/>
+                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status" @change="onChangeStatus"/>
                 </a-form-model-item>
                 <a-form-model-item label="描述" prop="description" v-show="showFormItem['description']">
                     <a-textarea v-model="form.description" :auto-size="{ minRows: 3, maxRows: 5 }" />
@@ -129,11 +130,11 @@
                 <a-form-model-item :wrapper-col="{ span: 12, offset: 5 }">
                     <a-row :gutter="8">
                         <a-col :span="6">
-                            <a-button type="primary" @click="handleSubmit">提交</a-button>
+                            <a-button type="primary" @click="handleSubmit(false)">提交</a-button>
                         </a-col>
                         <a-col :span="18">
-                            <a-button v-if="!test" type="dashed" @click="handleSubmit('test')" :loading="loading_test">测试连接</a-button>
-                            <a-button v-if="test" type="dashed" icon="check">连接成功</a-button>
+                            <a-button v-if="!test" type="dashed" @click="handleSubmit(true)" :loading="loading_test">测试连接</a-button>
+                            <a-button v-if="test" type="dashed" @click="handleSubmit(true)" icon="check">连接成功</a-button>
                         </a-col>
                     </a-row>
                 </a-form-model-item>
@@ -153,6 +154,8 @@
                 moreOption: false,
                 datasource_requires: {},
                 datasource_rules: {},
+                loading_datasource: false,
+                form_password: '',
                 form:{
                     datasource_id: '',
                     name: '',
@@ -189,7 +192,11 @@
                 test: false
             };
         },
-        watch: {},
+        watch: {
+            form_password(val){
+                this.form.password = val;
+            }
+        },
         computed: {
             rules(){
                 const default_rules = {
@@ -270,7 +277,6 @@
         },
         methods: {
             handleSubmit(test){
-
                 this.$refs.form.validate(valid => {
                     if (valid) {
                         if(test){
@@ -339,10 +345,16 @@
             get_form(){
                 this.$get(this.$api.moduleCoreConnections+'/'+this.id).then(res=>{
                     this.form = res.data;
+                    this.form.password = '';
+                    if(this.id > 0){
+                        this.getDatasourceSelector();
+                    }
                 });
             },
             getDatasourceSelector(params){
+                this.loading_datasource = true;
                 this.$get(this.$api.moduleCoreDatasources, params).then(res=>{
+                    this.loading_datasource = false;
                     if(res.data && res.data.data){
                         this.datasources = res.data.data;
                         let datasource = null;
@@ -355,7 +367,7 @@
                         this.setDynamicFormItems(datasource);
                     }
 
-                });
+                }).catch(()=>this.loading_datasource=false);
             },
             handleTypeChange(value) {
                 this.form.type = value;
@@ -376,7 +388,9 @@
                     datasource.requires.split(',').forEach (field => {
                         const [key, value] = field.split (':');
                         this.datasource_requires [key] = true;
-                        this.form [key] = value;
+                        if(this.$isEmpty(this.form [key])){
+                            this.form [key] = value;
+                        }
                         rules[key] = {
                             required: true,
                             message: '请填写内容'
@@ -385,9 +399,13 @@
                     datasource.options.split(',').forEach (field => {
                         const [key, value] = field.split (':');
                         this.datasource_requires [key] = false;
-                        this.form [key] = value;
+                        if(this.$isEmpty(this.form [key])){
+                            this.form [key] = value;
+                        }
+
                     });
                     this.datasource_rules = rules;
+
 
                     this.test = false;
                 }
@@ -400,7 +418,9 @@
                     this.id = this.$route.params.id;
                     this.get_form();
                 }
-                this.getDatasourceSelector({});
+                if(this.id === 0){
+                    this.getDatasourceSelector({});
+                }
             },
 
 

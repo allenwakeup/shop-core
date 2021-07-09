@@ -26,7 +26,8 @@ class FlushDataMapThenRestartQueue extends FlushConfigThenRestartQueue
     {
 
         Cache::forget (config('modules.cache.key') . '.core.data_maps');
-        DataMapRepository::all ();
+        Cache::forget (config('modules.cache.key') . '.core.data_maps');
+        DataMapRepository::loadFromCache ();
         parent::handler ();
     }
 }
