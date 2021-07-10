@@ -37,7 +37,7 @@ class DataMapServiceProvider extends ServiceProvider
         if (! Arr::has ($this->app ['config']->get ('core.data_mapping'), 'defined'))
         {
             if (App::environment ('testing', 'local')) {
-                $data_maps = DataMapRepository::allEnabled ();
+                $data_maps = DataMapRepository::relationships ();
             } else {
                 $data_maps = DataMapRepository::loadFromCache ();
             }

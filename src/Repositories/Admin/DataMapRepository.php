@@ -81,19 +81,19 @@ class DataMapRepository extends BaseRepository
     }
 
     public static function allEnabled() {
-        return DataMap::ofEnabled ()->get ()->toArray();
+        return DataMap::ofEnabled ()->get ();
     }
 
     public static function loadEnabledFromCache(){
         return Cache::rememberForever (config('modules.cache.key') . '.core.data_maps.enabled', function () {
-            return \collect(self::allEnabled());
+            return \collect(self::allEnabled()->toArray());
         });
     }
 
     public static function relationships ()
     {
 
-        $value = self::loadEnabledFromCache ();
+        $value = self::allEnabled ();
 
         if (! isset ($value) || $value->isEmpty ()) {
             return [];

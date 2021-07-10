@@ -39,7 +39,7 @@
         methods: {
 
             get_form(){
-                this.$get(this.$api.moduleCoreDataMaps+'/'+this.id + '/' +this.id + '/assignment').then(res=>{
+                this.$get(this.$api.moduleCoreDataMaps+'_'+this.id + '/' +this.id + '/assignment').then(res=>{
                     this.info = res.data;
                 });
             },

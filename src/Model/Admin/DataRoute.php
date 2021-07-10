@@ -105,6 +105,11 @@ class DataRoute extends Model
         return "定义从{$this->from}到{$this->to}的数据路径";
     }
 
+    public function getMenuAttribute ()
+    {
+        return "{$this->from}与{$this->to}";
+    }
+
     public function getOutputAttribute ($value)
     {
         return 'sync_' . $value;

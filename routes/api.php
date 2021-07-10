@@ -39,12 +39,12 @@ Route::prefix('Admin')->group(function(){
 
                     DataMapRepository::loadEnabledFromCache()->each(function($item){
                         $data_map_id = $item['id'];
-                        Route::post("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/store", 'DataMapController@storeAssignment')->name("data_maps.{$data_map_id}.assignment.store");
-                        Route::delete("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/destroy", 'DataMapController@destoryAssignment')->name("data_maps.{$data_map_id}.assignment.destroy");
-                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/source", 'DataMapController@assignmentSource')->name("data_maps.{$data_map_id}.assignment.source");
-                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{left_id}/target", 'DataMapController@assignmentTarget')->name("data_maps.{$data_map_id}.assignment.target");
-                        Route::get("/data_maps/{$data_map_id}/{id}/assignment", 'DataMapController@showAssignment')->name("data_maps.{$data_map_id}.assignment.show");
-                        Route::get("/data_maps/{$data_map_id}/{id}/assignment/{table_left}", 'DataMapController@assignment')->name("data_maps.{$data_map_id}.assignment.index");
+                        Route::post("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/store", 'DataMapController@storeAssignment')->name("data_maps.{$data_map_id}.assignment.store");
+                        Route::delete("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/destroy", 'DataMapController@destoryAssignment')->name("data_maps.{$data_map_id}.assignment.destroy");
+                        Route::get("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/source", 'DataMapController@assignmentSource')->name("data_maps.{$data_map_id}.assignment.source");
+                        Route::get("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/target", 'DataMapController@assignmentTarget')->name("data_maps.{$data_map_id}.assignment.target");
+                        Route::get("/data_maps_{$data_map_id}/{id}/assignment", 'DataMapController@showAssignment')->name("data_maps.{$data_map_id}.assignment.show");
+                        Route::get("/data_maps_{$data_map_id}/{id}/assignment/{table_left}", 'DataMapController@assignment')->name("data_maps.{$data_map_id}.assignment.index");
                     });
                 });
             });

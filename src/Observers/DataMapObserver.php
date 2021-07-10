@@ -39,7 +39,7 @@ class DataMapObserver
                     'children' => [
                         [
                             'name' => $item->title,
-                            'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps/{$item->id}/{$item->id}/assignment"),
+                            'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps_{$item->id}/{$item->id}/assignment"),
                         ]
                     ]
                 ]
@@ -81,7 +81,7 @@ class DataMapObserver
         module_tap (self::PERMISSION_SERVICE_ALIAS, function ($permission_service) use ($item) {
 
             $permission_service->remove([
-                $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps/dynamic/{$item->id}/assignment")
+                $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps_{$item->id}/{$item->id}/assignment")
             ], [
                 self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.index",
                 self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.source",
