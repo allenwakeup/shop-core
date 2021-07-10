@@ -47,23 +47,23 @@ class DataMapObserver
                 // 数据映射
                 $this->getSeedsModuleMenuGroupName(self::MODULE_ALIAS, '数据映射') => [
                     self::MODULE_ALIAS . ".data_maps.{$item->id}" => [
-                        'assignment.index' => [
+                        'index' => [
                             'name' => '列表',
                             'content' => "数据映射{$item->left}列表展示"
                         ],
-                        'assignment.source' => [
+                        'source' => [
                             'name' => '未分配列表',
                             'content' => "数据映射{$item->left}未分配列表展示"
                         ],
-                        'assignment.target' => [
+                        'target' => [
                             'name' => '已分配列表',
                             'content' => "数据映射{$item->left}已分配列表展示"],
-                        'assignment.store' => [
+                        'store' => [
                             'name' => '添加',
                             'content' => "添加{$item->left}到{$item->right}的数据映射"],
-                        'assignment.show' => [
+                        'show' => [
                             'name' => '详情', 'content' => "数据映射{$item->left}-{$item->right}详情"],
-                        'assignment.destroy' => [
+                        'destroy' => [
                             'name' => '删除',
                             'content' => "删除{$item->left}到{$item->right}的数据映射"
                         ]
