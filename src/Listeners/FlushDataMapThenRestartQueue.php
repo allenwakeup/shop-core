@@ -25,7 +25,7 @@ class FlushDataMapThenRestartQueue extends FlushConfigThenRestartQueue
     public function handle (DataMapUpdated $event)
     {
 
-        Cache::forget (config('modules.cache.key') . '.core.data_maps');
+        Cache::forget (config('modules.cache.key') . '.core.data_maps.enabled');
         Cache::forget (config('modules.cache.key') . '.core.data_maps');
         DataMapRepository::loadFromCache ();
         parent::handler ();

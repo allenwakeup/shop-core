@@ -38,8 +38,14 @@ class DataMapObserver
                     'name' => self::MODULE_NAME,
                     'children' => [
                         [
-                            'name' => $item->title,
-                            'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps_{$item->id}/{$item->id}/assignment"),
+                            'name' => $item->dataRoute->menu,
+                            'children' => [
+                                [
+                                    'name' => $item->title,
+                                    'link' => $this->getSeedsModuleApiUri(self::MODULE_ALIAS, "data_maps_{$item->id}/{$item->id}/assignment"),
+                                ]
+                            ]
+
                         ]
                     ]
                 ]
@@ -70,9 +76,7 @@ class DataMapObserver
                     ]
                 ]
             ])->run();
-
-            $permission_service->flush();
-        });
+        })->flush();
 
     }
 
@@ -91,9 +95,7 @@ class DataMapObserver
                 self::MODULE_ALIAS . ".data_maps.{$item->id}.assignment.destroy",
             ]);
 
-            $permission_service->flush ();
-
-        });
+        })->flush ();
 
     }
 

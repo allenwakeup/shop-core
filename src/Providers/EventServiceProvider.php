@@ -13,7 +13,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         'Goodcatch\Modules\Core\Events\ConnectionUpdated' => [
-            'Goodcatch\Modules\Core\Listeners\EventsFlushConnectionThenRestartQueue',
+            'Goodcatch\Modules\Core\Listeners\FlushConnectionThenRestartQueue',
         ],
         'Goodcatch\Modules\Core\Events\DataMapUpdated' => [
             'Goodcatch\Modules\Core\Listeners\FlushDataMapThenRestartQueue',
