@@ -114,7 +114,7 @@ class DataMapController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function showAssignment ($id)
@@ -146,9 +146,10 @@ class DataMapController extends Controller
     /**
      * data mapping left model
      *
-     * @param $id datamap ID
-     * @param $table_left string mapping id
      * @param Request $request
+     * @param int $id data map ID
+     * @param string $table_left mapping id
+     *
      * @return array
      */
     public function assignment (Request $request, $id, $table_left) {
@@ -171,12 +172,11 @@ class DataMapController extends Controller
     /**
      * data list which has not assigned yet
      *
-     * @param $id datamap ID
-     * @param $left_id string mapping id
-     * @param Request $request
+     * @param int $id number data map ID
+     * @param int $left_id string mapping ID
      * @return array
      */
-    public function assignmentSource (Request $request, $id, $left_id) {
+    public function assignmentSource ($id, $left_id) {
 
         $dataMap = DataMapRepository::find ($id);
 
@@ -193,12 +193,11 @@ class DataMapController extends Controller
     /**
      * data list which has already assigned
      *
-     * @param $id datamap ID
-     * @param $left_id string mapping id
-     * @param Request $request
+     * @param int $id number data map ID
+     * @param int $left_id string mapping ID
      * @return array
      */
-    public function assignmentTarget (Request $request, $id, $left_id) {
+    public function assignmentTarget ($id, $left_id) {
 
         $dataMap = DataMapRepository::find ($id);
 
@@ -216,8 +215,8 @@ class DataMapController extends Controller
      * map left model to right model
      *
      * @param \Illuminate\Http\Request $request
-     * @param $id number datamap ID
-     * @param $left_id number mapping id
+     * @param int $id data map ID
+     * @param int $left_id mapping id
      * @return array results
      */
     public function storeAssignment (Request $request, $id, $left_id) {
@@ -256,8 +255,8 @@ class DataMapController extends Controller
      * detach model mapping
      *
      * @param \Illuminate\Http\Request $request
-     * @param $id number datamap ID
-     * @param $left_id number mapping id
+     * @param int $id data map ID
+     * @param int $left_id mapping ID
      * @return array result
      */
     public function destroyAssignment (Request $request, $id, $left_id) {

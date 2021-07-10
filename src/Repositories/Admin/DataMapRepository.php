@@ -365,16 +365,16 @@ class DataMapRepository extends BaseRepository
     }
     public static function deleteAssignments (DataMap $dataMap, $detach, $left_id)
     {
-        $detach = [];
+        $detached = [];
         if (isset ($dataMap) && $dataMap->status === DataMap::STATUS_ENABLE)
         {
-            $detach = (new Eloquent)->setDataMapTable ($dataMap->left_table)
+            $detached = (new Eloquent)->setDataMapTable ($dataMap->left_table)
                 ->firstWhere ($dataMap->parent_key, $left_id)
                 ->setDataMapTable ($dataMap->left_table)
                 ->getDataMapping ($dataMap->right_table)
                 ->detach ($detach);
         }
-        return $detach;
+        return $detached;
     }
 
 

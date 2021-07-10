@@ -6,6 +6,7 @@
     "priority": 1,
     "order": 1,
     "providers": [
+        "Goodcatch\\Modules\\Core\\Providers\\EventServiceProvider",
         "Goodcatch\\Modules\\Core\\Providers\\CoreServiceProvider"
     ],
     "aliases": {

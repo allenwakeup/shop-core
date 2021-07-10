@@ -21,6 +21,5 @@ class CoreDatabaseSeeder extends Seeder
         $this->call(DatasourcesTableSeeder::class);
         $this->call(ConfigsTableSeeder::class);
         $this->call(ConnectionTableSeeder::class);
-        $this->call(ScheduleTableSeeder::class);
     }
 }
