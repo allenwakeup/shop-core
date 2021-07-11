@@ -137,6 +137,7 @@
             showAssignment(value){
                 if(this.select_list_item !== value){
                     this.select_list_item = value;
+                    this.data_right_selected = [];
                     if(this.isEmpty(this.actions.source)){
                         return this.$message.error('API source 未定义');
                     } else {

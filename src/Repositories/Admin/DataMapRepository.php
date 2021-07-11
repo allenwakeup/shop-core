@@ -7,7 +7,7 @@ namespace Goodcatch\Modules\Core\Repositories\Admin;
 
 use Goodcatch\Modules\Core\Model\Admin\DataMap;
 use Goodcatch\Modules\Core\Model\Admin\Eloquent;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
@@ -80,8 +80,12 @@ class DataMapRepository extends BaseRepository
         return DataMap::destroy ($id);
     }
 
-    public static function allEnabled() {
-        return DataMap::ofEnabled ()->get ();
+    private static function allEnabled() {
+        try{
+            return DataMap::ofEnabled ()->get ();
+        }catch(QueryException $e) {
+            return \collect([]);
+        }
     }
 
     public static function loadEnabledFromCache(){

@@ -19,7 +19,7 @@
         "ext-json": "*",
         "illuminate/support": "^8.0",
         "laravel/framework": "^8.0",
-        "elendev/nexus-composer-push": "^0.4.0",
+        "elendev/nexus-composer-push": "^0.4.2",
         "laravel/helpers": "^1.4.0",
         "goodcatch/laravel-modules": "^0.1.0"
     },
