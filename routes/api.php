@@ -40,7 +40,7 @@ Route::prefix('Admin')->group(function(){
                     DataMapRepository::loadEnabledFromCache()->each(function($item){
                         $data_map_id = $item['id'];
                         Route::post("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/store", 'DataMapController@storeAssignment')->name("data_maps.{$data_map_id}.store");
-                        Route::delete("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/destroy", 'DataMapController@destoryAssignment')->name("data_maps.{$data_map_id}.destroy");
+                        Route::delete("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/destroy", 'DataMapController@destroyAssignment')->name("data_maps.{$data_map_id}.destroy");
                         Route::get("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/source", 'DataMapController@assignmentSource')->name("data_maps.{$data_map_id}.source");
                         Route::get("/data_maps_{$data_map_id}/{id}/assignment/{left_id}/target", 'DataMapController@assignmentTarget')->name("data_maps.{$data_map_id}.target");
                         Route::get("/data_maps_{$data_map_id}/{id}/assignment", 'DataMapController@showAssignment')->name("data_maps.{$data_map_id}.show");
