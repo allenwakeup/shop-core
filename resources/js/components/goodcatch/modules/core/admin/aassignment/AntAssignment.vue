@@ -6,50 +6,48 @@
         <div class="page_body">
             <a-spin v-show="loading"/>
             <a-row :gutter="8" v-show="!loading" :style="{height: (height + 'px')}">
-                <a-col :span="7">
-                    <a-space direction="vertical">
-                        <div>
-                            <a-input-search
+                <a-col :span="8">
+                    <div>
+                        <a-input-search
+                                size="large"
                                 placeholder="搜索"
                                 @search="onSearchLeft"
-                            />
-                        </div>
-                        <div class="list_container" :style="{height: (height - 40) + 'px'}" :class="{'inactive' : loading_right}">
-                            <a-list
+                        />
+                    </div>
+                    <div class="list_container" :style="{height: (height - 40) + 'px'}" :class="{'inactive' : loading_right}">
+                        <a-list
                                 size="small"
                                 class="list"
                                 :loading="loading_left"
                                 item-layout="horizontal"
                                 :data-source="data_left">
-                                <a-list-item slot="renderItem" slot-scope="item, index" @click="showAssignment(item.value)" class="list-item" :class="{'active' : (select_list_item === item.value), 'inactive' : loading_right}">
-                                    <a-list-item-meta>
-                                        <span slot="title">{{ item.title }}</span>
-                                    </a-list-item-meta>
-                                    <a-icon type="check" class="list-item-icon" v-show="select_list_item === item.value"/>
-                                </a-list-item>
-                            </a-list>
-                        </div>
-                    </a-space>
+                            <a-list-item slot="renderItem" slot-scope="item, index" @click="showAssignment(item.value)" class="list-item" :class="{'active' : (select_list_item === item.value), 'inactive' : loading_right}">
+                                <a-list-item-meta>
+                                    <span slot="title">{{ item.title }}</span>
+                                </a-list-item-meta>
+                                <a-icon type="check" class="list-item-icon" v-show="select_list_item === item.value"/>
+                            </a-list-item>
+                        </a-list>
+                    </div>
                 </a-col>
-                <a-col :span="1"></a-col>
                 <a-col :span="16">
                     <a-spin v-show="loading_right"/>
                     <a-transfer
-                        :titles="['未分配', '已分配']"
-                        :operations="['分配', '取消']"
-                        show-search
-                        showSelectAll
-                        :list-style="{
+                            :titles="['未分配', '已分配']"
+                            :operations="['分配', '取消']"
+                            show-search
+                            showSelectAll
+                            :list-style="{
                             width: width,
                             height: height + 'px',
 
                         }"
-                        :data-source="data_right_source"
-                        :target-keys="data_right_target"
-                        :selected-keys="data_right_selected"
-                        :render="item => item.title"
-                        @change="handleChange"
-                        @selectChange="handleSelectChange">
+                            :data-source="data_right_source"
+                            :target-keys="data_right_target"
+                            :selected-keys="data_right_selected"
+                            :render="item => item.title"
+                            @change="handleChange"
+                            @selectChange="handleSelectChange">
                         <span slot="notFoundContent">
                           没数据
                         </span>
@@ -66,7 +64,8 @@
         props: {
             api: {
                 type: String,
-                required: true
+                required: true,
+                default: ''
             },
             title: {
                 type: String,

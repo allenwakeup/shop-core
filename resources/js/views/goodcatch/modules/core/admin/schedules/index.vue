@@ -99,7 +99,7 @@ export default {
               {title:'维护模式',dataIndex:'maintenance', width: 120},
               {title:'创建时间',dataIndex:'created_at', width: 200},
               {title:'更新时间',dataIndex:'updated_at', width: 200},
-              {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
+              {title:'操作',fixed:'right',scopedSlots: { customRender: 'action' }},
           ],
           list:[],
           dictionary: {

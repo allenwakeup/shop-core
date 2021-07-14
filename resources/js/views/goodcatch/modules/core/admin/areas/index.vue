@@ -45,7 +45,7 @@ export default {
               {title:'描述',dataIndex:'description'},
               {title:'创建时间',dataIndex:'created_at'},
               {title:'更新时间',dataIndex:'updated_at'},
-              {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
+              {title:'操作',fixed:'right',scopedSlots: { customRender: 'action' }},
           ],
           list:[],
       };

@@ -27,7 +27,7 @@
                     <a-input-number v-model="info.order" :min="0" @change="onChangeOrder" />
                 </a-form-model-item>
                 <a-form-model-item label="状态">
-                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="info.status" @change="onChangeStatus"/>
+                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="info.status === 1" @change="onChangeStatus"/>
                 </a-form-model-item>
                 <a-form-model-item :wrapper-col="{ span: 12, offset: 5 }">
                     <a-button type="primary" @click="handleSubmit">提交</a-button>

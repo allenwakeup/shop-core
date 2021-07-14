@@ -160,7 +160,7 @@
                 <a-row>
                     <a-col :span="12">
                         <a-form-model-item label="状态" :labelCol="{span:4}" :wrapperCol="{span:16}">
-                            <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status" @change="onChangeStatus"/>
+                            <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status === 1" @change="onChangeStatus"/>
                         </a-form-model-item>
                     </a-col>
                 </a-row>

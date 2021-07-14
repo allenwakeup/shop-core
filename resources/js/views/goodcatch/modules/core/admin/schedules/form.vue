@@ -52,7 +52,7 @@
                                 placeholder="请选择任务模板"
                                 :model="form.input3"
                                 style="width: 180px"
-                                label-in-value="true"
+                                :label-in-value="true"
                                 @change="handleInput3Change" v-show="showFormItem['input3']">
                             <a-select-option value="App\\Modules\\Core\\Jobs\\ExchangeData">
                                 数据交换
@@ -74,7 +74,7 @@
                     <a-modal
                             v-model="payloadHelper1"
                             title="输入表、输出表、队列任务配置参考"
-                            body-style="overflow: scroll; height:500px;"
+                            :body-style="{ overflow: 'scroll', height: '500px' }"
                             :dialog-style="{ top: '20px' }"
                             width="80%"
                             height="600px">
@@ -264,7 +264,7 @@
                     <a-modal
                             v-model="payloadHelper2"
                             title="数据校验发送结果至邮件的配置参考"
-                            body-style="overflow: scroll; height:500px;"
+                            :body-style="{ overflow: 'scroll', height: '500px' }"
                             :dialog-style="{ top: '20px' }"
                             width="80%"
                             height="600px">
@@ -372,13 +372,13 @@
                     <a-input-number v-model="form.order" :min="0" @change="onChangeOrder" />
                 </a-form-model-item>
                 <a-form-model-item label="状态">
-                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status" @change="onChangeStatus"/>
+                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status === 1" @change="onChangeStatus"/>
                 </a-form-model-item>
                 <a-form-model-item label="单次任务" v-show="form.status === 1">
-                    <a-switch checked-children="是" un-checked-children="否" :checked="form.once" @change="onChangeOnceOptions"/>
+                    <a-switch checked-children="是" un-checked-children="否" :checked="form.once === 1" @change="onChangeOnceOptions"/>
                 </a-form-model-item>
                 <a-form-model-item label="立即启动" v-show="id === 0 || form.schedule_type !== 3">
-                    <a-switch checked-children="启动" un-checked-children="否" :checked="form.start" @change="onChangeStartOptions"/>
+                    <a-switch checked-children="启动" un-checked-children="否" :checked="form.start === 1" @change="onChangeStartOptions"/>
                 </a-form-model-item>
                 <a-form-model-item :wrapper-col="{ span: 12, offset: 5 }">
                     <a-button type="primary" @click="handleSubmit">提交</a-button>
@@ -533,6 +533,7 @@
             },
             get_form(){
                 this.$get(this.$api.moduleCoreSchedules+'/'+this.id).then(res=>{
+                    res.data.payload = res.data.payload ? JSON.stringify(res.data.payload, null, 2) : '';
                     this.form = res.data;
                     if(res.data.schedule_type && res.data.input){
                         this.form['input' + res.data.schedule_type] = res.data.input;

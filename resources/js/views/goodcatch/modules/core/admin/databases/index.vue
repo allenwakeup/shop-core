@@ -37,7 +37,7 @@
                 </a-col>
                 <a-col :span="1"></a-col>
                 <a-col :span="17">
-                    <a-table :columns="columns" :scroll="{ y: 330 }" :loading="table_loading" :data-source="table_columns" :pagination="false" row-key="id">
+                    <a-table :columns="columns" :scroll="{ y: 330 }" :loading="table_loading" :data-source="table_columns" :pagination="false" row-key="Field">
 
                     </a-table>
                 </a-col>

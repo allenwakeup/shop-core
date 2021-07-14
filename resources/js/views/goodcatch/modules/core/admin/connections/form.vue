@@ -88,7 +88,7 @@
                     <a-input v-model="form.schema"></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="严格模式" prop="strict" v-show="showFormItem['strict']">
-                    <a-switch checked-children="开启" un-checked-children="关闭" :checked="form.strict" @change="onChangeStrictOptions"/>
+                    <a-switch checked-children="开启" un-checked-children="关闭" :checked="form.strict === 1" @change="onChangeStrictOptions"/>
                 </a-form-model-item>
                 <a-form-model-item label="Engine" prop="engine" v-show="showFormItem['engine']">
                     <a-input v-model="form.engine"></a-input>
@@ -103,7 +103,7 @@
                     <a-input v-model="form.sslmode"></a-input>
                 </a-form-model-item>
                 <a-form-model-item label="其他选项" prop="options" v-show="showFormItem['options']">
-                    <a-textarea v-model="form.options" :auto-size="{ minRows: 3, maxRows: 5 }" />
+                    <a-textarea v-model="form.options" placeholder="JSON格式" :auto-size="{ minRows: 3, maxRows: 5 }" />
                 </a-form-model-item>
                 <a-form-model-item label="分类" prop="type" v-show="showFormItem['type']">
                     <a-select v-model="form.type" default-value="SRC" style="width: 120px" @change="handleTypeChange">
@@ -122,7 +122,7 @@
                     <a-input-number v-model="form.order" :min="0" @change="onChangeOrder" />
                 </a-form-model-item>
                 <a-form-model-item label="状态" prop="status" v-show="showFormItem['status']">
-                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status" @change="onChangeStatus"/>
+                    <a-switch checked-children="启用" un-checked-children="禁用" :checked="form.status === 1" @change="onChangeStatus"/>
                 </a-form-model-item>
                 <a-form-model-item label="描述" prop="description" v-show="showFormItem['description']">
                     <a-textarea v-model="form.description" :auto-size="{ minRows: 3, maxRows: 5 }" />
@@ -181,7 +181,7 @@
                     edition: '',
                     server_version: '',
                     sslmode: '',
-                    options: '{}',
+                    options: '',
                     type: 'SRC',
                     group: '',
                     order: 1,
@@ -282,7 +282,7 @@
                         if(test){
                             this.loading_test = true;
                             this.$post(this.$api.moduleCoreTestConnection,this.form).then(res=>{
-                                if(res.code == 200 || res.code == 201){
+                                if(res.code === 200 || res.code === 201){
                                     this.loading_test = false;
                                     this.test = true;
                                     return this.$message.success(res.msg);
@@ -297,7 +297,7 @@
                             let api = this.$apiHandle(this.$api.moduleCoreConnections,this.id);
                             if(api.status){
                                 this.$put(api.url,this.form).then(res=>{
-                                    if(res.code == 200){
+                                    if(res.code === 200){
                                         this.$message.success(res.msg)
                                         return this.$router.back();
                                     }else{
@@ -306,7 +306,7 @@
                                 })
                             }else{
                                 this.$post(api.url,this.form).then(res=>{
-                                    if(res.code == 200 || res.code == 201){
+                                    if(res.code === 200 || res.code === 201){
                                         this.$message.success(res.msg)
                                         return this.$router.back();
                                     }else{
@@ -344,7 +344,9 @@
             },
             get_form(){
                 this.$get(this.$api.moduleCoreConnections+'/'+this.id).then(res=>{
+                    res.data.options = res.data.options ? JSON.stringify(res.data.options, null, 2) : '';
                     this.form = res.data;
+
                     this.form.password = '';
                     if(this.id > 0){
                         this.getDatasourceSelector();

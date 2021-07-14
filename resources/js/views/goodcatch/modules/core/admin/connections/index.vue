@@ -68,7 +68,7 @@ export default {
               {title:'状态',dataIndex:'status', width: 90},
               {title:'创建时间',dataIndex:'created_at', width: 200},
               {title:'更新时间',dataIndex:'updated_at', width: 200},
-              {title:'操作',key:'id',fixed:'right',scopedSlots: { customRender: 'action' }},
+              {title:'操作',fixed:'right',scopedSlots: { customRender: 'action' }},
           ],
           list:[],
       };
