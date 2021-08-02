@@ -230,7 +230,7 @@ class DataMapRepository extends BaseRepository
 
                 return [
                     'title' => $transform,
-                    'key' => $item->{$dataMap->related_key}
+                    'key' => $item->{$dataMap->related_key} . ''
                 ];
             });
         }
@@ -255,7 +255,7 @@ class DataMapRepository extends BaseRepository
             // 如果存在关联关系
             if (isset ($pivot_Eloquent))
             {
-                $data = $pivot_Eloquent->get()->pluck ($dataMap->related_key);
+                $data = $pivot_Eloquent->get()->map(function($item) use ($dataMap) { return $item->{$dataMap->related_key} . ''; });
             }
         }
         return $data;
