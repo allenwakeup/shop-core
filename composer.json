@@ -1,7 +1,6 @@
 {
-    "name": "goodcatch/laravel-module-core",
+    "name": "goodcatch/shop-core",
     "description": "goodcatch laravel module - core, the most practically and basic module for modules",
-    "version": "0.1.0",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -28,20 +27,6 @@
             "Tests\\": "tests/"
         }
     },
-    "extra": {
-        "nexus-push": {
-            "url": "https://repos.goodcatch.cn/repository/composer",
-            "ignore-by-git-attributes": true,
-            "ignore": [
-                "test.php",
-                "auth.json",
-                ".git",
-                ".DS_Store",
-                ".idea/",
-                "vendor/"
-            ]
-        }
-    },
     "autoload": {
         "psr-4": {
             "Goodcatch\\Modules\\Core\\": "src"
@@ -50,13 +35,6 @@
             "database/seeds"
         ]
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://repos.goodcatch.cn/repository/goodcatch-composer-group/"
-        },
-        {
-            "packagist.org": false
-        }
-    ]
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
