@@ -50,14 +50,16 @@ class DatabaseServiceProvider extends ServiceProvider
 
         if (isset ($connections) && count ($connections) > 0)
         {
-            $installed = $this->app ['config']->get ('database.connections', []);
+            $config_repository = $this->app ['config'];
+
+            $installed = $config_repository->get ('database.connections', []);
             foreach ($connections as $name => $config)
             {
                 if (! Arr::has ($installed, $name))
                 {
                     unset ($config ['name']);
                     unset ($config ['type']);
-                    $this->app ['config']->set ('database.connections.' . $name, $config);
+                    $config_repository->set ('database.connections.' . $name, $config);
                 }
             }
 

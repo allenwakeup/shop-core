@@ -2,6 +2,7 @@
 
 namespace Goodcatch\Modules\Core\Providers;
 
+use Goodcatch\Modules\Core\Console\Kernel;
 use Goodcatch\Modules\Core\Model\Admin\DataMap;
 use Goodcatch\Modules\Core\Model\Admin\DataRoute;
 use Goodcatch\Modules\Core\Observers\DataMapObserver;
@@ -52,6 +53,10 @@ class CoreServiceProvider extends ServiceProvider
         $this->app->register(ResourcesServiceProvider::class);
         $this->app->register(DatabaseServiceProvider::class);
         $this->app->register(DataMapServiceProvider::class);
+
+        $this->app->singleton('console.core', function ($app, $params) {
+            return new Kernel($app, ...$params);
+        });
 
         $this->registerMailViews();
 
